@@ -16,6 +16,7 @@ export default function LoginScreen() {
   const [notice, setNotice] = useState(null);
   const { configured, projectId, user, ready, busy, error, clearError, signIn, signUp, resetPassword } = useAuth();
   const { chooseLocalOnly } = useData();
+  const [localOpen, setLocalOpen] = useState(false);
 
   // A restored session should land on the app, not on this screen.
   useEffect(() => {
@@ -121,28 +122,39 @@ export default function LoginScreen() {
             </Text>
           )}
 
-          {/* The other path, kept and made honest.
-              An account is what carries the data to the shooter's next phone,
-              so it is the default. Working without one is a real choice and
-              stays available - but it is made once, here, on a screen that
-              says what it costs, rather than being where everyone quietly ends
-              up by closing a dialog. */}
+          {/* Folded away, because it was dominating the screen it is meant to
+              be secondary to. Two taps rather than one: the first reveals what
+              working without an account costs, the second accepts it. That
+              keeps the choice an informed one - which was the whole point of
+              the panel - without the explanation crowding out the sign-in form
+              for everybody who was never going to pick it. */}
           {configured && (
-            <View style={[s.localBox, { borderColor: colors.bd }]}>
-              <Text style={[s.localTitle, { color: colors.tx }]}>Rather not make an account?</Text>
-              <Text style={[s.localBody, { color: colors.mut }]}>
-                You can use everything without one. Your groups, loads and workups stay on
-                this phone only — nothing is uploaded, and nothing is shared. The cost is
-                that they stay on this phone: a new device, a lost phone or a reinstall
-                starts empty, and the only copy is whatever you have backed up from
-                Settings yourself.
-              </Text>
-              <TouchableOpacity
-                onPress={chooseLocalOnly}
-                style={[s.localBtn, { borderColor: colors.bd }]}
-              >
-                <Text style={[s.localBtnText, { color: colors.mut }]}>Use without an account</Text>
-              </TouchableOpacity>
+            <View style={s.localWrap}>
+              {!localOpen ? (
+                <TouchableOpacity onPress={() => setLocalOpen(true)}>
+                  <Text style={[s.localLink, { color: colors.fnt }]}>
+                    Rather not make an account? <Text style={{ color: colors.act }}>Use it offline</Text>
+                  </Text>
+                </TouchableOpacity>
+              ) : (
+                <View style={[s.localBox, { borderColor: colors.bd }]}>
+                  <Text style={[s.localBody, { color: colors.mut }]}>
+                    Everything works without one. Your groups, loads and workups stay on this
+                    phone — nothing is uploaded and nothing is shared. The cost is that they
+                    stay on this phone: a new device, a lost phone or a reinstall starts
+                    empty, and the only copy is whatever you back up from Settings yourself.
+                  </Text>
+                  <TouchableOpacity
+                    onPress={chooseLocalOnly}
+                    style={[s.localBtn, { borderColor: colors.bd }]}
+                  >
+                    <Text style={[s.localBtnText, { color: colors.mut }]}>Use without an account</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => setLocalOpen(false)}>
+                    <Text style={[s.localLink, { color: colors.fnt, marginTop: 10 }]}>Back to signing in</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
             </View>
           )}
         </View>
@@ -169,9 +181,10 @@ const s = StyleSheet.create({
   form: { width: '100%', gap: 12 },
   label: { fontSize: 12, fontWeight: '600', marginBottom: 6 },
   input: { width: '100%', padding: 14, paddingHorizontal: 16, borderWidth: 1, borderRadius: 13, fontSize: 15 },
-  localBox: { borderWidth: 1, borderRadius: 14, padding: 16, marginTop: 26 },
-  localTitle: { fontSize: 14.5, fontWeight: '800' },
-  localBody: { fontSize: 12.5, lineHeight: 18, marginTop: 6 },
+  localWrap: { marginTop: 22 },
+  localLink: { fontSize: 12.5, textAlign: 'center', lineHeight: 18 },
+  localBox: { borderWidth: 1, borderRadius: 14, padding: 16 },
+  localBody: { fontSize: 12.5, lineHeight: 18 },
   localBtn: {
     borderWidth: 1, borderRadius: 11, paddingVertical: 12,
     alignItems: 'center', marginTop: 14,

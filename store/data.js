@@ -101,10 +101,6 @@ export function DataProvider({ children }) {
   // Off until explicitly granted. Never inferred, never defaulted on.
   const [trainingConsent, setTrainingConsentState] = useState(noConsent());
   const [ready, setReady] = useState(false);
-  // Whether the shooter has been asked whether they want the demo data. Not
-  // whether they took it - declining is an answer, and the prompt must not
-  // come back every launch.
-  const [demoOffered, setDemoOffered] = useState(true);
   // Whether the shooter has chosen to work without an account. Recorded, so
   // the choice is made once rather than being re-asked every launch.
   const [localOnly, setLocalOnly] = useState(false);
@@ -147,9 +143,6 @@ export function DataProvider({ children }) {
         setTrainingConsentState(data.prefs?.trainingConsent ?? noConsent());
         setBullPresets(data.prefs?.bullPresets || []);
         setLocalOnly(data.prefs?.localOnly === true);
-        // Ask only an install that has never been asked and has nothing in it.
-        const asked = data.prefs?.demoOffered === true;
-        setDemoOffered(asked || (data.rifles?.length || 0) > 0 || (data.sessions?.length || 0) > 0);
       }
       if (!cancelled) { setReady(true); setPrefsReady(true); }
     })();
@@ -323,13 +316,6 @@ export function DataProvider({ children }) {
       setSessions(data.sessions || []);
       setProjects(data.projects || []);
     }
-    setDemoOffered(true);
-  }, []);
-
-  /** Decline it. Recorded, so the prompt does not return next launch. */
-  const dismissDemo = useCallback(() => {
-    setDemoOffered(true);
-    persist(() => db.putPref('demoOffered', true));
   }, []);
 
   /** Everything the app holds, for the backup file. */
@@ -358,7 +344,6 @@ export function DataProvider({ children }) {
     setProfileName(d.prefs?.profileName ?? '');
     setTrainingConsentState(d.prefs?.trainingConsent ?? noConsent());
     setBullPresets(d.prefs?.bullPresets || []);
-    setDemoOffered(true);
     return d;
   }, []);
 
@@ -508,13 +493,13 @@ export function DataProvider({ children }) {
     getProject, addProject, updateProject, deleteProject,
     getDopeCard, addDopeCard, deleteDopeCard,
     bullPresets, addBullPreset, deleteBullPreset,
-    demoOffered, loadDemo, dismissDemo,
+    loadDemo,
     snapshot, restoreBackup, syncNow, syncState, signedIn: !!user?.uid,
     localOnly, chooseLocalOnly, prefsReady,
     exportSessionsCSV,
   }), [rifles, loads, sessions, projects, dopeCards, units, setUnit, ready,
        bullPresets, addBullPreset, deleteBullPreset,
-       demoOffered, loadDemo, dismissDemo, snapshot, restoreBackup, syncNow, syncState, user?.uid,
+       loadDemo, snapshot, restoreBackup, syncNow, syncState, user?.uid,
        localOnly, chooseLocalOnly, prefsReady,
        profileName, setProfile, clearAllData, deleteAccount,
        trainingConsent, setTrainingConsent, getRifle, getLoad, getSession, getRifleName, addSession, updateSession, addRifle, addLoad, updateRifle, deleteRifle, updateLoad, deleteLoad, deleteSession, getProject, addProject, updateProject, deleteProject, getDopeCard, addDopeCard, deleteDopeCard, exportSessionsCSV]);

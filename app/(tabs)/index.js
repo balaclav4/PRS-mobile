@@ -18,7 +18,7 @@ const LOADDEV_STEPS = ['Goal', 'Screen', 'Max Chg', 'Accuracy', 'Primers', 'Ladd
 export default function HomeScreen() {
   const { colors } = useTheme();
   const { sessions, rifles, projects, dopeCards, units, getRifleName, profileName,
-          demoOffered, loadDemo, dismissDemo } = useData();
+          loadDemo } = useData();
   const initials = initialsFrom(profileName);
   const router = useRouter();
 
@@ -74,21 +74,23 @@ export default function HomeScreen() {
           </TouchableOpacity>
         </View>
 
-        {/* Asked once, on an install that has never been asked and holds
-            nothing. Demo data used to arrive unrequested, which meant a new
-            shooter's first real group landed in a list of five they never
-            fired - and every figure on this screen averaged the fiction in. */}
-        {!demoOffered && (
+        {/* Shown until there is something to shoot with, and no longer.
+            Gating it on "have we asked" meant it hung around after the shooter
+            had already got started, and needed a dismiss button to get rid of -
+            a control whose only job was to admit the card had outstayed its
+            welcome. Gating it on having a rifle makes it self-clearing: add
+            one, or load the demo set, and it goes. */}
+        {rifles.length === 0 && (
           <View style={[s.firstRun, { backgroundColor: colors.card, borderColor: colors.act }]}>
             <Text style={[s.firstRunTitle, { color: colors.tx }]}>Start with your own gear?</Text>
             <Text style={[s.firstRunBody, { color: colors.mut }]}>
-              The app is empty. Add a rifle and a load as you go, or load a demo set to
-              look around first — it can be cleared from Settings at any point.
+              Nothing is set up yet. Add the rifle you shoot and the load you shoot in it, or
+              load a demo set to look around first — it can be cleared from Settings.
             </Text>
             <View style={s.firstRunRow}>
-              <TouchableOpacity onPress={dismissDemo}
+              <TouchableOpacity onPress={() => router.push('/equipment')}
                 style={[s.firstRunBtn, { backgroundColor: colors.act, borderColor: colors.act }]}>
-                <Text style={[s.firstRunBtnText, { color: '#fff' }]}>Start empty</Text>
+                <Text style={[s.firstRunBtnText, { color: '#fff' }]}>Add equipment</Text>
               </TouchableOpacity>
               <TouchableOpacity onPress={loadDemo}
                 style={[s.firstRunBtn, { borderColor: colors.bd }]}>
