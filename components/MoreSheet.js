@@ -3,6 +3,8 @@ import { Wind, FlaskConical, Wrench, Settings, LogOut, ChevronRight, BookOpen, C
 import { useRouter } from 'expo-router';
 import { useRef, useEffect } from 'react';
 import { useTheme } from '../lib/theme';
+import { useAuth } from '../store/auth';
+import { useData } from '../store/data';
 
 const items = [
   { icon: Wind, label: 'Ballistics', sub: 'Dope card & drops', route: '/ballistics' },
@@ -29,6 +31,8 @@ const items = [
  */
 export default function MoreSheet({ visible, onClose }) {
   const { colors } = useTheme();
+  const { user, signOut } = useAuth();
+  const { exitLocalOnly } = useData();
   const router = useRouter();
   const translateY = useRef(new Animated.Value(0)).current;
 
@@ -113,12 +117,35 @@ export default function MoreSheet({ visible, onClose }) {
                 <ChevronRight size={18} color={colors.fnt} />
               </TouchableOpacity>
             ))}
-            <TouchableOpacity onPress={() => { onClose(); router.replace('/login'); }} style={[s.row, { backgroundColor: colors.card, borderColor: colors.bd }]}>
-              <View style={[s.iconWrap, { backgroundColor: colors.dngs }]}>
-                <LogOut size={20} color={colors.dngt} />
+            {/* This said Sign Out and only navigated to the login screen - it
+                never signed anybody out. It looked like it worked because the
+                login screen sends a signed-in user away again, so the shooter
+                landed back on the dashboard still signed in, which reads as
+                "it went back home".
+
+                It also has to say the right thing: somebody working offline is
+                not signed in, so offering to sign them out is nonsense. For
+                them it is the way *in*. */}
+            <TouchableOpacity
+              onPress={async () => {
+                onClose();
+                if (user) await signOut();
+                // Clears local-only as well, so the gate asks again rather than
+                // waving through a session that has just been ended.
+                exitLocalOnly();
+              }}
+              style={[s.row, { backgroundColor: colors.card, borderColor: colors.bd }]}
+            >
+              <View style={[s.iconWrap, { backgroundColor: user ? colors.dngs : colors.acs }]}>
+                <LogOut size={20} color={user ? colors.dngt : colors.act} />
               </View>
               <View style={s.mid}>
-                <Text style={[s.label, { color: colors.dngt }]}>Sign Out</Text>
+                <Text style={[s.label, { color: user ? colors.dngt : colors.act }]}>
+                  {user ? 'Sign Out' : 'Sign In'}
+                </Text>
+                <Text style={[s.sub, { color: colors.mut }]}>
+                  {user ? user.email : 'Keep your data across devices'}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>

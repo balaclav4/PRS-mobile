@@ -387,6 +387,19 @@ export function DataProvider({ children }) {
     return r;
   }, [user?.uid]);
 
+  /**
+   * Leave local-only, so the gate asks again.
+   *
+   * Signing out has to clear this too, or a shooter who once chose to work
+   * offline and later made an account would press Sign Out and stay in the app
+   * - signed out of Firebase but still waved through by the local-only flag,
+   * looking at an empty dataset with no way back to the login screen.
+   */
+  const exitLocalOnly = useCallback(() => {
+    setLocalOnly(false);
+    persist(() => db.putPref('localOnly', false));
+  }, []);
+
   /** Work without an account, knowingly. */
   const chooseLocalOnly = useCallback(() => {
     setLocalOnly(true);
@@ -495,12 +508,12 @@ export function DataProvider({ children }) {
     bullPresets, addBullPreset, deleteBullPreset,
     loadDemo,
     snapshot, restoreBackup, syncNow, syncState, signedIn: !!user?.uid,
-    localOnly, chooseLocalOnly, prefsReady,
+    localOnly, chooseLocalOnly, exitLocalOnly, prefsReady,
     exportSessionsCSV,
   }), [rifles, loads, sessions, projects, dopeCards, units, setUnit, ready,
        bullPresets, addBullPreset, deleteBullPreset,
        loadDemo, snapshot, restoreBackup, syncNow, syncState, user?.uid,
-       localOnly, chooseLocalOnly, prefsReady,
+       localOnly, chooseLocalOnly, exitLocalOnly, prefsReady,
        profileName, setProfile, clearAllData, deleteAccount,
        trainingConsent, setTrainingConsent, getRifle, getLoad, getSession, getRifleName, addSession, updateSession, addRifle, addLoad, updateRifle, deleteRifle, updateLoad, deleteLoad, deleteSession, getProject, addProject, updateProject, deleteProject, getDopeCard, addDopeCard, deleteDopeCard, exportSessionsCSV]);
 

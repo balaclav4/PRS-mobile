@@ -28,7 +28,7 @@ export default function AccountScreen() {
   const {
     sessions, rifles, loads, dopeCards, projects, exportSessionsCSV,
     profileName, setProfile, clearAllData, deleteAccount, trainingConsent,
-    signedIn, syncState, syncNow,
+    signedIn, syncState, syncNow, exitLocalOnly,
   } = useData();
 
   const { configured, user, projectId, signOut, deleteAccountForever, busy, error } = useAuth();
@@ -263,7 +263,7 @@ export default function AccountScreen() {
           icon={LogOut}
           label="Sign out"
           sub={user ? `Signs out ${user.email}` : 'Returns to the login screen'}
-          onPress={async () => { await signOut(); router.replace('/login'); }}
+          onPress={async () => { await signOut(); exitLocalOnly(); }}
         />
 
         <Text style={[s.section, { color: colors.mut }]}>DANGER ZONE</Text>

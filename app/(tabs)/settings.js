@@ -25,7 +25,7 @@ const UNIT_OPTIONS = {
 export default function SettingsScreen() {
   const { colors, pref, choose, systemScheme } = useTheme();
   const { exportSessionsCSV, units, setUnit, trainingConsent, setTrainingConsent,
-          snapshot, restoreBackup } = useData();
+          snapshot, restoreBackup, exitLocalOnly } = useData();
   const consentOn = consentIsCurrent(trainingConsent);
   const needsRenewal = consentNeedsRenewal(trainingConsent);
   const router = useRouter();
@@ -278,7 +278,7 @@ export default function SettingsScreen() {
         </View>
 
         <TouchableOpacity
-          onPress={async () => { await signOut(); router.replace('/login'); }}
+          onPress={async () => { await signOut(); exitLocalOnly(); }}
           style={[s.signOut, { backgroundColor: colors.dngs }]}
         >
           <LogOut size={18} color={colors.dngt} />
