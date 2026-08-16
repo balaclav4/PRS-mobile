@@ -1,10 +1,13 @@
 import { View, Text, TouchableOpacity, Pressable, StyleSheet, Platform, Modal, Animated, PanResponder } from 'react-native';
 import { Wind, FlaskConical, Wrench, Settings, LogOut, ChevronRight, BookOpen, Crosshair } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
-import { useRef, useEffect } from 'react';
+import { useRef, useCallback } from 'react';
 import { useTheme } from '../lib/theme';
 import { useAuth } from '../store/auth';
 import { useData } from '../store/data';
+
+/** How far the sheet travels to leave the screen. */
+const SHEET_TRAVEL = 600;
 
 const items = [
   { icon: Wind, label: 'Ballistics', sub: 'Dope card & drops', route: '/ballistics' },
@@ -36,15 +39,37 @@ export default function MoreSheet({ visible, onClose }) {
   const router = useRouter();
   const translateY = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    if (visible) translateY.setValue(0);
-  }, [visible, translateY]);
+  /**
+   * Put the sheet back at rest, then close it.
+   *
+   * The reset belongs here, on the way out, not on the way in. It used to
+   * happen in an effect when `visible` turned true - which runs *after* that
+   * render, so the sheet was laid out once at whatever offset the last drag
+   * left behind. Swipe it away and reopen it and you got a sheet sitting most
+   * of the way down the screen, showing only its first row.
+   *
+   * Resetting as it closes means the value is always zero for as long as the
+   * sheet is unmounted, so there is no stale offset for the next open to
+   * inherit and no dependence on effect ordering.
+   */
+  const settle = useCallback(() => {
+    translateY.setValue(0);
+    onClose();
+  }, [onClose, translateY]);
 
-  const close = () => {
-    // Animate out rather than vanishing, so the gesture feels connected to the
-    // result.
-    Animated.timing(translateY, { toValue: 600, duration: 180, useNativeDriver: true })
-      .start(({ finished }) => { if (finished) onClose(); });
+  const slideAway = useCallback((duration) => {
+    Animated.timing(translateY, { toValue: SHEET_TRAVEL, duration, useNativeDriver: true })
+      // Not conditional on `finished`. Gating the close on a completed
+      // animation meant an interrupted one left the sheet open at an offset
+      // with nothing to bring it back - the same stuck state by another route.
+      .start(() => settle());
+  }, [settle, translateY]);
+
+  const close = () => slideAway(180);
+
+  /** Back to fully open, for a drag that did not go far enough. */
+  const springBack = () => {
+    Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 4 }).start();
   };
 
   const pan = useRef(
@@ -58,13 +83,14 @@ export default function MoreSheet({ visible, onClose }) {
       onPanResponderRelease: (_e, g) => {
         // Far enough, or fast enough — a flick should dismiss without needing
         // the full distance.
-        if (g.dy > 90 || g.vy > 0.8) {
-          Animated.timing(translateY, { toValue: 600, duration: 160, useNativeDriver: true })
-            .start(({ finished }) => { if (finished) onClose(); });
-        } else {
-          Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 4 }).start();
-        }
+        if (g.dy > 90 || g.vy > 0.8) slideAway(160);
+        else springBack();
       },
+      // A gesture the sheet loses rather than finishes. Without this the drag
+      // offset simply stayed where the finger left it, open and half deployed,
+      // with no release ever arriving to tidy it up.
+      onPanResponderTerminate: () => springBack(),
+      onPanResponderTerminationRequest: () => false,
     })
   ).current;
 
