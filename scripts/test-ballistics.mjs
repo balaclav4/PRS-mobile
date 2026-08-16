@@ -10,7 +10,8 @@
  */
 import {
   solve, dopeCard, zeroAngle, trueBC, densityRatio, speedOfSound,
-  pressureAtAltitude, inchesToMoa, inchesToMil, standardCd, windBracket, trueBoth } from '../lib/ballistics.js';
+  pressureAtAltitude, inchesToMoa, inchesToMil, standardCd, windBracket, trueBoth,
+  DRAG_MODELS, isKnownDragModel } from '../lib/ballistics.js';
 
 let fails = 0;
 const check = (name, ok, detail = '') => {
@@ -259,15 +260,39 @@ console.log('\nstring inputs from TextInput');
 
 console.log('\nthe standard drag tables are the standard ones');
 {
-  // Anchor values that identify G1 and G7. A transcription slip anywhere in a
-  // list of 140 numbers would corrupt every trajectory silently, and these are
-  // the points where the two curves are most distinctive.
+  // Anchor values that identify each curve. A transcription slip anywhere in
+  // six hundred numbers would corrupt every trajectory silently, and these are
+  // the points where the curves are most distinctive: the subsonic floor and
+  // the transonic peak, which differ per model in both height and where they
+  // fall. Two curves agreeing at Mach 0 and disagreeing at the peak is the
+  // signature of the wrong table under the right name.
   const near = (a, b, tol) => Math.abs(a - b) <= tol;
 
-  check('  G1 subsonic floor', near(standardCd('G1', 0), 0.2629, 0.0002), standardCd('G1', 0).toFixed(4));
-  check('  G1 peaks near Mach 1.4', near(standardCd('G1', 1.40), 0.6625, 0.0002), standardCd('G1', 1.40).toFixed(4));
-  check('  G7 subsonic floor', near(standardCd('G7', 0), 0.1198, 0.0002), standardCd('G7', 0).toFixed(4));
-  check('  G7 peaks near Mach 1.05', near(standardCd('G7', 1.05), 0.4043, 0.0002), standardCd('G7', 1.05).toFixed(4));
+  // model  Cd(0)    peak Cd  at Mach
+  const ANCHORS = [
+    ['G1',  0.2629,  0.6625,  1.400],
+    ['G2',  0.2303,  0.4114,  1.075],
+    ['G5',  0.1710,  0.4406,  1.400],
+    ['G6',  0.2617,  0.4497,  1.150],
+    ['G7',  0.1198,  0.4043,  1.050],
+    ['G8',  0.2105,  0.4493,  1.075],
+    ['GI',  0.2282,  0.6423,  1.250],
+    ['RA4', 0.2283,  0.5943,  1.150],
+  ];
+  for (const [model, floor, peak, peakMach] of ANCHORS) {
+    check(`  ${model} subsonic floor`,
+      near(standardCd(model, 0), floor, 0.0002), standardCd(model, 0).toFixed(4));
+    check(`  ${model} peaks ${peak} near Mach ${peakMach}`,
+      near(standardCd(model, peakMach), peak, 0.0002), standardCd(model, peakMach).toFixed(4));
+  }
+
+  // Each peak really is the maximum of its own curve, not just a value that
+  // happens to match. This is what catches two models sharing one table.
+  for (const [model, , peak] of ANCHORS) {
+    let max = 0;
+    for (let m = 0; m <= 5; m += 0.005) max = Math.max(max, standardCd(model, m));
+    check(`  ${model}'s peak is its actual maximum`, near(max, peak, 0.0005), max.toFixed(4));
+  }
 
   check('  G7 is far flatter than G1 through the subsonic range',
     standardCd('G7', 0.5) < standardCd('G1', 0.5) * 0.65,
@@ -276,8 +301,24 @@ console.log('\nthe standard drag tables are the standard ones');
     standardCd('G7', 1.0) > standardCd('G7', 0.9) * 2.4 &&
     standardCd('G1', 1.0) > standardCd('G1', 0.9) * 1.35,
     'this is the behaviour a single exponential decay cannot produce');
+  // The tables now run to Mach 5 rather than Mach 4, so the clamp point moved.
+  // Asserted against each table's own last point rather than a literal, which
+  // is what the previous version got wrong when the range changed under it.
   check('  and are clamped rather than extrapolated past the ends',
-    standardCd('G7', 99) === standardCd('G7', 4.0) && standardCd('G1', -5) === standardCd('G1', 0));
+    standardCd('G7', 99) === standardCd('G7', 5.0) &&
+    standardCd('RA4', 99) === standardCd('RA4', 4.0) &&
+    standardCd('G1', -5) === standardCd('G1', 0));
+
+  // An unknown model must refuse rather than default. It used to fall through
+  // to G7, so asking for G5 and getting G7 produced a card that looked fine.
+  let refused = false;
+  try { standardCd('G9', 1.0); } catch { refused = true; }
+  check('  an unknown model is refused, not quietly solved as G7', refused);
+  check('  and the name is matched case-insensitively',
+    standardCd('g5', 1.4) === standardCd('G5', 1.4));
+  check('  every offered model resolves',
+    DRAG_MODELS.every(m => isKnownDragModel(m.id)),
+    DRAG_MODELS.map(m => m.id).join(' '));
 }
 
 console.log('\nthe card carries the effects the app computes');

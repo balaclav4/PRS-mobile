@@ -174,7 +174,8 @@ The `--` matters: it passes the rest through to the CLI rather than to npm.
   carrying an alpha channel. Icons are baked at prebuild, so this needs a new
   native build to appear — an OTA update will not carry it.
 - [x] `eas.json` with development, preview and production profiles.
-- [x] `npm test` - 37 checks: a syntax gate, a schema gate and 35 harnesses.
+- [x] `npm test` - 44 checks: a syntax gate, a schema gate, a native-API gate,
+  a SQLite gate and 40 harnesses.
 
 ## Not blocking
 

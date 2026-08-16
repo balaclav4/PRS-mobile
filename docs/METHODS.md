@@ -132,7 +132,7 @@ different questions and the second one is the one that matters.
 
 | Source | Status | What it gives |
 |---|---|---|
-| G1–G8 standard drag functions | US Army BRL — US Government work, public domain | The reference drag curves. Already shipped in `lib/ballistics.js`. |
+| G1, G2, G5–G8, GI, RA4 standard drag functions | US Army BRL — US Government work, public domain | The reference drag curves. All eight shipped in `lib/ballistics.js` as of 16 Aug 2026; before that only G1 and G7, so a BC quoted against any other model had nowhere to go. |
 | US Standard Atmosphere 1976 | NOAA / NASA / USAF, public domain | The atmosphere model already in use. |
 | MCRP 3-01A | US Marine Corps, public domain | Field method for wind, ranging and holds. Quotable **with citation**, unlike the commercial titles. |
 | NOAA/NCEI World Magnetic Model | Public domain, reissued every five years | Magnetic declination. Wanted because Coriolis needs a *true* azimuth and a shooter reads a magnetic one off a compass — currently the app just asks and hopes. |
@@ -146,7 +146,15 @@ different questions and the second one is the one that matters.
   the app must not carry the files. This is exactly why import exists: the
   shooter downloads from Lapua and imports, and the curve is stored with its
   source recorded. That design was right for a better reason than we knew.
-- **JBM's bullet library** — all rights reserved.
+- **JBM's bullet library** — all rights reserved. Note the line drawn on
+  16 Aug 2026 when the six extra drag models were added: the standard drag
+  *tables* were transcribed from files JBM publishes, and that is fine, because
+  they are BRL's public-domain government product and copying a public-domain
+  table does not create rights in it. JBM's own compilations — the bullet
+  library and the bullet-length list — are a different thing and stay out. The
+  length list is the tempting one, since bullet length is exactly the input
+  Miller's Sg needs and the figure shooters least often have. It is still
+  theirs.
 - **Applied Ballistics data** — all rights reserved, stated on their own papers.
 - **Manufacturer BC tables** — individual figures are facts, but the tables are
   compilations and scraping one is taking the compilation. Ask, or let the

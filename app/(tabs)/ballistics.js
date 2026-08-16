@@ -18,7 +18,7 @@ import {
   parseDragFunction, checkDragFunction, makeDragFunction,
   sectionalDensity, impliedBc, compareToStandard,
 } from '../../lib/dragfn';
-import { standardCd } from '../../lib/ballistics';
+import { standardCd, DRAG_MODELS } from '../../lib/ballistics';
 import {
   gyroscopicStability, stabilityVerdict, secondaryEffects,
   parseTwist, parseGrains, densityRatioFromDa,
@@ -559,13 +559,40 @@ export default function BallisticsScreen() {
           </View>
         </View>
 
-        <View style={s.toggleRow}>
-          {/* G7 fits modern boat-tails; G1 is the older flat-base reference and
-              its BC drifts more with velocity. */}
-          <View style={{ flex: 1 }}>
-            <Text style={[s.fieldLabel, { color: colors.mut }]}>Drag model</Text>
-            <Segmented options={[['G7', 'G7'], ['G1', 'G1']]} value={dragModel} onChange={setDragModel} colors={colors} />
+        {/* Eight models, so this is a wrapping chip row rather than the
+            Segmented control it used to be: Segmented divides the width
+            evenly, and eight even slices leaves each one too narrow to read
+            "RA4", let alone hit.
+
+            They are ordered by how often they are actually wanted, not
+            alphabetically - G7 and G1 cover nearly every shooter, and the
+            other six exist so a BC quoted against one of them can be used as
+            quoted instead of being solved as something else. */}
+        <View style={{ marginTop: 14 }}>
+          <Text style={[s.fieldLabel, { color: colors.mut }]}>Drag model</Text>
+          <View style={s.modelWrap}>
+            {DRAG_MODELS.map((m) => {
+              const on = dragModel === m.id;
+              return (
+                <TouchableOpacity key={m.id} onPress={() => setDragModel(m.id)}
+                  style={[s.modelChip, {
+                    backgroundColor: on ? colors.acs : colors.card,
+                    borderColor: on ? colors.act : colors.bd,
+                  }]}>
+                  <Text style={[s.modelChipText, { color: on ? colors.act : colors.mut }]}>{m.id}</Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
+          {/* Says what the selected model is for. Nobody remembers what G6 is,
+              and picking one at random is worse than leaving it on G7. */}
+          <Text style={[s.note, { color: colors.fnt }]}>
+            {DRAG_MODELS.find(m => m.id === dragModel)?.note
+              ?? 'Use the model your BC was quoted against.'}
+          </Text>
+        </View>
+
+        <View style={s.toggleRow}>
           <View style={{ flex: 1 }}>
             <Text style={[s.fieldLabel, { color: colors.mut }]}>Output</Text>
             <Segmented options={[['moa', 'MOA'], ['mil', 'MIL']]} value={unit} onChange={setUnit} colors={colors} />
@@ -1291,7 +1318,11 @@ export default function BallisticsScreen() {
                       )}
                       {hit.otherCurve && (
                         <Text style={[s.note, { color: colors.fnt }]}>
-                          Dashed: {hit.other.name}, G{hit.other.dragModel === 'G1' ? '1' : '7'} BC {hit.other.bc}
+                          {/* Was `G{dragModel === 'G1' ? '1' : '7'}`, which
+                              labelled a G5 load as G7. With eight models a
+                              two-way guess is a wrong label on a comparison
+                              whose whole job is telling two loads apart. */}
+                          Dashed: {hit.other.name}, {hit.other.dragModel || 'G7'} BC {hit.other.bc}
                           {hit.otherEven != null && hit.even != null && (
                             hit.even === hit.otherEven
                               ? '. Even money at the same range.'
@@ -1714,6 +1745,9 @@ const s = StyleSheet.create({
   loadStatLabel: { fontSize: 11, fontWeight: '600', color: '#9E9BB0', marginTop: 4 },
 
   toggleRow: { flexDirection: 'row', gap: 10, marginTop: 14 },
+  modelWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
+  modelChip: { paddingHorizontal: 13, paddingVertical: 8, borderRadius: 10, borderWidth: 1, minWidth: 52, alignItems: 'center' },
+  modelChipText: { fontSize: 13, fontWeight: '700' },
   segmented: { flexDirection: 'row', gap: 4, borderRadius: 10, padding: 4 },
   seg: { flex: 1, alignItems: 'center', paddingVertical: 7, borderRadius: 7 },
   segText: { fontSize: 13, fontWeight: '700' },
