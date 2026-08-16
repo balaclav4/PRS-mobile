@@ -1,43 +1,40 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
     Android 13+ themed icon. The launcher recolours this to the wallpaper, so
-    it has to be one flat colour on transparent - the orange cannot survive.
+    it has to be one flat colour on transparent.
 
-    That costs the only thing separating the shots from the rings they sit on,
-    so the rings are masked away around each hole to leave a gap. Without it
-    the group merges into the inner ring and the icon loses its subject.
+    That is harder for this mark than for a line drawing, because the whole
+    design is figure and ground: the rings and the bull are not drawn on the
+    black, they are the paper showing through it. Flattening naively gives a
+    solid tinted disc with nothing on it.
+
+    So the disc is the shape, and the rings, the bull and a halo around each
+    shot are cut out of it. The halos do the job the orange did in the colour
+    version - without them the group merges into the black and the icon loses
+    its subject.
   -->
   <defs>
-    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+    <mask id="paper" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
       <rect width="1024" height="1024" fill="#FFFFFF"/>
+      <g stroke="#000000" stroke-width="28" fill="none">
+        <circle cx="512" cy="512" r="244"/>
+        <circle cx="512" cy="512" r="152"/>
+      </g>
+      <circle cx="512" cy="512" r="60" fill="#000000"/>
       <g fill="#000000">
-        <circle cx="336" cy="356" r="74"/>
-        <circle cx="426" cy="326" r="70"/>
-        <circle cx="360" cy="442" r="72"/>
+        <circle cx="352" cy="368" r="74"/>
+        <circle cx="442" cy="336" r="70"/>
+        <circle cx="376" cy="452" r="72"/>
       </g>
     </mask>
   </defs>
 
-  <g transform="translate(512,512) scale(0.72) translate(-512,-512)">
-    <g mask="url(#gap)">
-      <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
-        <g stroke-width="44">
-          <path d="M512 66 V 208"/>
-          <path d="M512 816 V 958"/>
-          <path d="M66 512 H 208"/>
-          <path d="M816 512 H 958"/>
-        </g>
-        <g stroke-width="46">
-          <circle cx="512" cy="512" r="330"/>
-          <circle cx="512" cy="512" r="206"/>
-        </g>
-      </g>
-      <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
-    </g>
+  <g transform="translate(512,512) scale(0.86) translate(-512,-512)">
+    <circle cx="512" cy="512" r="336" fill="#FFFFFF" mask="url(#paper)"/>
     <g fill="#FFFFFF">
-      <circle cx="336" cy="356" r="56"/>
-      <circle cx="426" cy="326" r="52"/>
-      <circle cx="360" cy="442" r="54"/>
+      <circle cx="352" cy="368" r="56"/>
+      <circle cx="442" cy="336" r="52"/>
+      <circle cx="376" cy="452" r="54"/>
     </g>
   </g>
 </svg>

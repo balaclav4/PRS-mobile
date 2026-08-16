@@ -1,35 +1,24 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
-    Splash mark. Unlike the app icon nothing masks this one, so it carries its
-    own corners, and it keeps the purple tile rather than sitting bare: the
-    splash background is #F4F3F8 in light and #0F0E14 in dark, and a white
-    reticle would vanish against one of them.
-  -->
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#7B4DF0"/>
-      <stop offset="1" stop-color="#4A24B4"/>
-    </linearGradient>
-  </defs>
-  <rect width="1024" height="1024" rx="229" ry="229" fill="url(#bg)"/>
+    Splash mark. Nothing masks this one, so it carries its own corners.
 
-  <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
-    <g stroke-width="44">
-      <path d="M512 96 V 208"/>
-      <path d="M512 816 V 928"/>
-      <path d="M96 512 H 208"/>
-      <path d="M816 512 H 928"/>
-    </g>
-    <g stroke-width="46">
-      <circle cx="512" cy="512" r="330"/>
-      <circle cx="512" cy="512" r="206"/>
-    </g>
+    It keeps the buff card rather than floating the black disc bare. The splash
+    background is #F4F3F8 in light and #0F0E14 in dark: a bare disc would be
+    invisible against the dark one, and the card is what makes the mark read as
+    paper in both.
+  -->
+  <rect width="1024" height="1024" rx="229" ry="229" fill="#EFE9DC"/>
+
+  <circle cx="512" cy="512" r="336" fill="#17161D"/>
+  <g stroke="#EFE9DC" stroke-width="28" fill="none">
+    <circle cx="512" cy="512" r="244"/>
+    <circle cx="512" cy="512" r="152"/>
   </g>
-  <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
+  <circle cx="512" cy="512" r="60" fill="#EFE9DC"/>
 
   <g fill="#F0872B">
-    <circle cx="336" cy="356" r="56"/>
-    <circle cx="426" cy="326" r="52"/>
-    <circle cx="360" cy="442" r="54"/>
+    <circle cx="352" cy="368" r="56"/>
+    <circle cx="442" cy="336" r="52"/>
+    <circle cx="376" cy="452" r="54"/>
   </g>
 </svg>

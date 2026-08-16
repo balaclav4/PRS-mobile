@@ -1,49 +1,39 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
-    App icon. Full bleed and square on purpose: iOS applies its own
-    superellipse mask, so corners rounded here would be rounded twice.
-  -->
-  <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#7B4DF0"/>
-      <stop offset="1" stop-color="#4A24B4"/>
-    </linearGradient>
-  </defs>
-  <rect width="1024" height="1024" fill="url(#bg)"/>
+    App icon: an actual paper target rather than a symbol of one. Buff stock,
+    black aiming black, buff scoring rings, and three torn holes off the bull.
 
-  <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
-    <!--
-      Reticle ticks, broken at the rings. A crosshair running edge to edge
-      was tried and reads as a grid laid over the target; stopping the arms
-      outside the outer ring keeps the two things separate. They are short,
-      so they are the first thing at risk when the icon is scaled down - at
-      stroke 44 they survive 40px, which was checked rather than assumed.
-    -->
-    <g stroke-width="44">
-      <path d="M512 66 V 208"/>
-      <path d="M512 816 V 958"/>
-      <path d="M66 512 H 208"/>
-      <path d="M816 512 H 958"/>
-    </g>
-    <!-- Two scoring rings, not four: more than two and they moire into a
-         flat disc at the size an icon actually lives at. -->
-    <g stroke-width="46">
-      <circle cx="512" cy="512" r="330"/>
-      <circle cx="512" cy="512" r="206"/>
-    </g>
-  </g>
-  <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
+    It is the only candidate that is not a dark tile, which on a home screen
+    full of dark tiles is the whole point of it.
+
+    Full bleed and square on purpose: iOS applies its own superellipse mask,
+    so corners rounded here would be rounded twice.
+  -->
+  <rect width="1024" height="1024" fill="#EFE9DC"/>
+
+  <circle cx="512" cy="512" r="336" fill="#17161D"/>
 
   <!--
-    Three shots, unequal and barely touching, well off the bull - which is
-    the thing this app measures, not the fact of hitting a target. Equal
-    circles at equal overlap read as a trefoil; the variation is what makes
-    them read as holes. Kept clear of the bull: overlapping it looked like a
-    rendering fault rather than a shot.
+    Two scoring rings, not four: beyond two they moire into a flat disc at the
+    size an icon actually lives at. They are cut out of the black rather than
+    drawn on it, which is how a real target is printed.
+  -->
+  <g stroke="#EFE9DC" stroke-width="28" fill="none">
+    <circle cx="512" cy="512" r="244"/>
+    <circle cx="512" cy="512" r="152"/>
+  </g>
+  <circle cx="512" cy="512" r="60" fill="#EFE9DC"/>
+
+  <!--
+    Three shots, unequal and barely touching, well off the bull - which is the
+    thing this app measures, not the fact of hitting a target. Equal circles at
+    equal overlap read as a trefoil; the variation is what makes them read as
+    holes. Kept clear of the bull: overlapping it looked like a rendering fault
+    rather than a shot.
   -->
   <g fill="#F0872B">
-    <circle cx="336" cy="356" r="56"/>
-    <circle cx="426" cy="326" r="52"/>
-    <circle cx="360" cy="442" r="54"/>
+    <circle cx="352" cy="368" r="56"/>
+    <circle cx="442" cy="336" r="52"/>
+    <circle cx="376" cy="452" r="54"/>
   </g>
 </svg>

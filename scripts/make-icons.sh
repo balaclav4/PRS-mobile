@@ -24,7 +24,7 @@ render() {  # render <svg> <size> <out>
 # An icon with alpha builds fine and is then rejected at upload with
 # ITMS-90717, about twenty minutes after you thought you were finished.
 render icon 1024 /tmp/prs-icon.png
-magick /tmp/prs-icon.png -background '#5A2FD0' -alpha remove -alpha off -strip assets/icon.png
+magick /tmp/prs-icon.png -background '#EFE9DC' -alpha remove -alpha off -strip assets/icon.png
 rm -f /tmp/prs-icon.png
 
 render splash               1024 assets/splash-icon.png

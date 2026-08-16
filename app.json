@@ -20,7 +20,7 @@
     "android": {
       "package": "com.prsprecision.app",
       "adaptiveIcon": {
-        "backgroundColor": "#5A2FD0",
+        "backgroundColor": "#EFE9DC",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
