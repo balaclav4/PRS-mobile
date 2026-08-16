@@ -410,3 +410,86 @@ build the training-data upload or soften the policy text describing it.
 
 Cloud sync remains built and unwired. That is now a feature gap rather than a
 data-loss risk, because backup and restore cover the loss case.
+
+
+## Reported from hardware, 16 Aug 2026 — sync loses everything
+
+> "when i delete the app and log back in the data is gone, even after it says
+> that it has synced"
+
+Reproduced by reading rather than by guessing. There are two separate faults
+and either one alone would produce the report.
+
+### S1. Sync runs once per sign-in and never again
+
+`syncNow` has exactly two callers: `store/data.js:167`, inside an effect keyed
+`[ready, user?.uid]`, and the manual button at `app/(tabs)/account.js:205`.
+
+Nothing else. No sync on write, no timer, nothing on app background, nothing on
+sign-out. So the sequence is:
+
+1. Sign in. Sync runs — both sides empty — and succeeds.
+2. Record rifles, loads, sessions. **None of it is ever pushed.**
+3. Delete the app, reinstall, sign in.
+4. Sync runs, the server is empty, there is nothing to pull, and it succeeds.
+
+The shooter's data was never on the server at any point. The only thing that
+would have saved it was happening to open Account and tap Sync before deleting
+the app, which is not a thing anyone would know to do.
+
+### S2. "Last synced" is truthful about the wrong thing
+
+`app/(tabs)/account.js:216` shows `Last synced <time>` whenever the result is
+`ok`, without regard to `pushed` and `pulled` — both of which are returned by
+`runSync` and both of which are zero in the case above.
+
+So the message is accurate (a sync did run, and did complete) and completely
+misleading (it moved nothing, and there is nothing on the server). This is what
+turned a silent gap into a confident false promise, and it is why the report
+says "even after it says that it has synced".
+
+The status line must distinguish *a sync happened* from *your data is on the
+server*. "Last synced 14:02 — nothing to send" is the honest version of what
+the app currently reports as unqualified success.
+
+### S3. Even a manual sync drops every shot
+
+Independent of the above, and it would survive fixing it.
+
+`lib/db.js:741` `readAllForSync` reads sessions with
+`SELECT * FROM sessions WHERE ownerId = ?` and never attaches their targets —
+unlike `readAll`, which builds them from the targets table. So a pushed session
+document contains no shot coordinates at all.
+
+Worse on the way back: `applyPull` calls `putSession(rec)` with `rec.targets`
+undefined, and `putSession` does `DELETE FROM targets WHERE sessionId = ?` and
+then iterates `s.targets || []`. **Pulling a session onto a device that already
+has it deletes that device's shots.** Sync does not merely fail to carry the
+data, it destroys it on arrival.
+
+### What this makes untrue in writing
+
+- `RELEASE.md` privacy-label copy: "their shooting data — sessions, shot
+  coordinates, aim points ... stored under their own uid so it reaches their
+  other devices". Shot coordinates never leave the device.
+- The in-app Account copy promising data survives losing the phone.
+- The 15 Aug burn-down note that cloud sync being unwired "is now a feature gap
+  rather than a data-loss risk". It is a data-loss risk again, and worse than
+  unwired would have been, because the app now claims it works.
+
+### Also queued behind these, from the code review
+
+Not the cause of this report, but they are in the same path and will bite as
+soon as it is exercised:
+
+- Every `put*` hardcodes `deleted` to 0, so a pulled tombstone is written back
+  as a live record and then pushed over the server's tombstone. Deletions do
+  not fail to propagate, they invert.
+- `applyPull` stamps `updatedAt = Date.now()` instead of the record's own, so
+  every pulled record looks locally newer and is re-pushed on every sync
+  thereafter.
+- `clearUserData` and `clearEverything` issue unscoped `DELETE FROM <table>`
+  with no `ownerId` filter, so erasing one account's data on a shared phone
+  destroys every other account's rows and the pre-account `local` ones.
+- `purgeRemote` is defined and never called; `RELEASE.md` claims it runs on
+  account deletion.
