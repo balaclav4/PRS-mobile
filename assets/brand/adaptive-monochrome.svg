@@ -1,13 +1,43 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
     Android 13+ themed icon. The launcher recolours this to the wallpaper, so
-    it has to be one flat colour on transparent - the orange cannot survive,
-    and the group is carried by shape alone.
+    it has to be one flat colour on transparent - the orange cannot survive.
+
+    That costs the only thing separating the shots from the rings they sit on,
+    so the rings are masked away around each hole to leave a gap. Without it
+    the group merges into the inner ring and the icon loses its subject.
   -->
-  <g transform="translate(512,512) scale(0.80) translate(-512,-512)" fill="#FFFFFF">
-    <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
-    <circle cx="432" cy="448" r="62"/>
-    <circle cx="556" cy="420" r="66"/>
-    <circle cx="496" cy="552" r="60"/>
+  <defs>
+    <mask id="gap" maskUnits="userSpaceOnUse" x="0" y="0" width="1024" height="1024">
+      <rect width="1024" height="1024" fill="#FFFFFF"/>
+      <g fill="#000000">
+        <circle cx="336" cy="356" r="74"/>
+        <circle cx="426" cy="326" r="70"/>
+        <circle cx="360" cy="442" r="72"/>
+      </g>
+    </mask>
+  </defs>
+
+  <g transform="translate(512,512) scale(0.72) translate(-512,-512)">
+    <g mask="url(#gap)">
+      <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+        <g stroke-width="44">
+          <path d="M512 66 V 208"/>
+          <path d="M512 816 V 958"/>
+          <path d="M66 512 H 208"/>
+          <path d="M816 512 H 958"/>
+        </g>
+        <g stroke-width="46">
+          <circle cx="512" cy="512" r="330"/>
+          <circle cx="512" cy="512" r="206"/>
+        </g>
+      </g>
+      <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
+    </g>
+    <g fill="#FFFFFF">
+      <circle cx="336" cy="356" r="56"/>
+      <circle cx="426" cy="326" r="52"/>
+      <circle cx="360" cy="442" r="54"/>
+    </g>
   </g>
 </svg>

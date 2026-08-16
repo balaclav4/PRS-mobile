@@ -11,23 +11,39 @@
   </defs>
   <rect width="1024" height="1024" fill="url(#bg)"/>
 
-  <!--
-    Aim point. There are no edge ticks: a full reticle is the more obvious
-    drawing, but the ticks are the first thing to disappear at the ~60px an
-    icon actually lives at, and the ring plus the group already say what the
-    app is for.
-  -->
-  <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
+  <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+    <!--
+      Reticle ticks, broken at the rings. A crosshair running edge to edge
+      was tried and reads as a grid laid over the target; stopping the arms
+      outside the outer ring keeps the two things separate. They are short,
+      so they are the first thing at risk when the icon is scaled down - at
+      stroke 44 they survive 40px, which was checked rather than assumed.
+    -->
+    <g stroke-width="44">
+      <path d="M512 66 V 208"/>
+      <path d="M512 816 V 958"/>
+      <path d="M66 512 H 208"/>
+      <path d="M816 512 H 958"/>
+    </g>
+    <!-- Two scoring rings, not four: more than two and they moire into a
+         flat disc at the size an icon actually lives at. -->
+    <g stroke-width="46">
+      <circle cx="512" cy="512" r="330"/>
+      <circle cx="512" cy="512" r="206"/>
+    </g>
+  </g>
+  <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
 
   <!--
-    Three shots, unequal and barely touching, high and left of the aim point
-    - which is the thing this app measures, not the fact of hitting a target.
-    Equal circles at equal overlap read as a trefoil; the variation is what
-    makes them read as holes.
+    Three shots, unequal and barely touching, well off the bull - which is
+    the thing this app measures, not the fact of hitting a target. Equal
+    circles at equal overlap read as a trefoil; the variation is what makes
+    them read as holes. Kept clear of the bull: overlapping it looked like a
+    rendering fault rather than a shot.
   -->
   <g fill="#F0872B">
-    <circle cx="432" cy="448" r="62"/>
-    <circle cx="556" cy="420" r="66"/>
-    <circle cx="496" cy="552" r="60"/>
+    <circle cx="336" cy="356" r="56"/>
+    <circle cx="426" cy="326" r="52"/>
+    <circle cx="360" cy="442" r="54"/>
   </g>
 </svg>

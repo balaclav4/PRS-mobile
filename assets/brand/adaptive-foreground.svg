@@ -1,16 +1,32 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
   <!--
-    Android adaptive icon, foreground layer. Transparent, and scaled to 0.80
+    Android adaptive icon, foreground layer. Transparent, and scaled to 0.72
     so the whole mark sits inside the centre 66% that every launcher mask is
-    guaranteed to leave visible. At the icon's own scale a circular mask would
-    clip the ring, which is the one element that has to stay a closed circle.
+    guaranteed to leave visible.
+
+    0.72 rather than the 0.80 the rings alone would allow: the reticle arms
+    reach 446 from centre, and the safe radius is 341, so 341/446 = 0.765 is
+    the hard ceiling. Anything looser and a circular mask clips the tips off
+    the arms, which reads as damage rather than as a crop.
   -->
-  <g transform="translate(512,512) scale(0.80) translate(-512,-512)">
-    <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
+  <g transform="translate(512,512) scale(0.72) translate(-512,-512)">
+    <g stroke="#FFFFFF" fill="none" stroke-linecap="round">
+      <g stroke-width="44">
+        <path d="M512 66 V 208"/>
+        <path d="M512 816 V 958"/>
+        <path d="M66 512 H 208"/>
+        <path d="M816 512 H 958"/>
+      </g>
+      <g stroke-width="46">
+        <circle cx="512" cy="512" r="330"/>
+        <circle cx="512" cy="512" r="206"/>
+      </g>
+    </g>
+    <circle cx="512" cy="512" r="60" fill="#FFFFFF"/>
     <g fill="#F0872B">
-      <circle cx="432" cy="448" r="62"/>
-      <circle cx="556" cy="420" r="66"/>
-      <circle cx="496" cy="552" r="60"/>
+      <circle cx="336" cy="356" r="56"/>
+      <circle cx="426" cy="326" r="52"/>
+      <circle cx="360" cy="442" r="54"/>
     </g>
   </g>
 </svg>
