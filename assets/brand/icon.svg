@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    App icon. Full bleed and square on purpose: iOS applies its own
+    superellipse mask, so corners rounded here would be rounded twice.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7B4DF0"/>
+      <stop offset="1" stop-color="#4A24B4"/>
+    </linearGradient>
+  </defs>
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+
+  <!--
+    Aim point. There are no edge ticks: a full reticle is the more obvious
+    drawing, but the ticks are the first thing to disappear at the ~60px an
+    icon actually lives at, and the ring plus the group already say what the
+    app is for.
+  -->
+  <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
+
+  <!--
+    Three shots, unequal and barely touching, high and left of the aim point
+    - which is the thing this app measures, not the fact of hitting a target.
+    Equal circles at equal overlap read as a trefoil; the variation is what
+    makes them read as holes.
+  -->
+  <g fill="#F0872B">
+    <circle cx="432" cy="448" r="62"/>
+    <circle cx="556" cy="420" r="66"/>
+    <circle cx="496" cy="552" r="60"/>
+  </g>
+</svg>

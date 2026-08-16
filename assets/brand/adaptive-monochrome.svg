@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    Android 13+ themed icon. The launcher recolours this to the wallpaper, so
+    it has to be one flat colour on transparent - the orange cannot survive,
+    and the group is carried by shape alone.
+  -->
+  <g transform="translate(512,512) scale(0.80) translate(-512,-512)" fill="#FFFFFF">
+    <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
+    <circle cx="432" cy="448" r="62"/>
+    <circle cx="556" cy="420" r="66"/>
+    <circle cx="496" cy="552" r="60"/>
+  </g>
+</svg>

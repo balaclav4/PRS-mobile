@@ -166,7 +166,13 @@ The `--` matters: it passes the rest through to the CLI rather than to npm.
   the hardware test exercises what would actually ship.
 - [x] Bundle identifiers, versions and build numbers set for both platforms.
 - [x] Camera and photo library usage descriptions written for iOS and Android.
-- [x] Icons, adaptive icons and splash screen configured.
+- [x] Icons, adaptive icons and splash screen configured. The paths were right
+  from the start but the artwork was Expo's template chevron until 16 Aug 2026 —
+  configured and branded are not the same thing, and the earlier builds shipped
+  the placeholder. Sources are SVG in `assets/brand/`; `scripts/make-icons.sh`
+  regenerates every PNG from them and fails if the App Store icon comes out
+  carrying an alpha channel. Icons are baked at prebuild, so this needs a new
+  native build to appear — an OTA update will not carry it.
 - [x] `eas.json` with development, preview and production profiles.
 - [x] `npm test` - 37 checks: a syntax gate, a schema gate and 35 harnesses.
 

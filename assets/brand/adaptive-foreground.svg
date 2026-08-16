@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    Android adaptive icon, foreground layer. Transparent, and scaled to 0.80
+    so the whole mark sits inside the centre 66% that every launcher mask is
+    guaranteed to leave visible. At the icon's own scale a circular mask would
+    clip the ring, which is the one element that has to stay a closed circle.
+  -->
+  <g transform="translate(512,512) scale(0.80) translate(-512,-512)">
+    <circle cx="512" cy="512" r="312" fill="none" stroke="#FFFFFF" stroke-width="54"/>
+    <g fill="#F0872B">
+      <circle cx="432" cy="448" r="62"/>
+      <circle cx="556" cy="420" r="66"/>
+      <circle cx="496" cy="552" r="60"/>
+    </g>
+  </g>
+</svg>
