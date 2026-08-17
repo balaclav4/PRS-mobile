@@ -9,7 +9,7 @@
     "scheme": "on-paper",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.onpaper.app",
+      "bundleIdentifier": "com.maxwellsimons.onpaper",
       "infoPlist": {
         "NSCameraUsageDescription": "On Paper needs camera access to photograph your targets for shot group analysis.",
         "NSPhotoLibraryUsageDescription": "On Paper needs photo library access to import target photos for shot group analysis.",
@@ -18,7 +18,7 @@
       "buildNumber": "1"
     },
     "android": {
-      "package": "com.onpaper.app",
+      "package": "com.maxwellsimons.onpaper",
       "adaptiveIcon": {
         "backgroundColor": "#EFE9DC",
         "foregroundImage": "./assets/android-icon-foreground.png",

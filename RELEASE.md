@@ -12,8 +12,27 @@ rejection. Better done before release than after.
 
 - [x] Display name, permission strings, login header, settings version line,
       problem-report header.
-- [x] `bundleIdentifier` and `package` are now `com.onpaper.app`. This had to
-      happen before release, because it is permanent afterwards.
+- [x] `bundleIdentifier` and `package` are now `com.maxwellsimons.onpaper`.
+      This had to happen before release, because it is permanent afterwards.
+
+      **Not** `com.onpaper.app`, which was tried first and rejected by Apple:
+
+          An App ID with Identifier 'com.onpaper.app' is not available.
+
+      Bundle identifiers are unique across all of Apple, not just one account,
+      and somebody else holds that one. Possibly as a wildcard `com.onpaper.*`,
+      which would block every `com.onpaper.something` as well — hence dropping
+      the prefix entirely rather than trying `com.onpaper.rifle` next and
+      burning another round trip.
+
+      Namespacing to the developer account is both idiomatic for an Individual
+      Apple team and guaranteed unique, since nobody else registers under
+      somebody else's name. It is invisible to users, so it costs nothing.
+
+      Worth noting as a weak signal about the name: somebody thought
+      `com.onpaper.app` was worth reserving. It does not block the App Store
+      *name*, which is a separate namespace, but it means someone else has had
+      the same idea.
 - [x] `scheme` is now `on-paper`.
 - [x] Backup format is `on-paper-backup`, and `prs-precision-backup` is still
       accepted on read. `readBackup` compared the format for equality, so
