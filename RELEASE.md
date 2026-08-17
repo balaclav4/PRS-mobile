@@ -160,18 +160,31 @@ rejection. Better done before release than after.
       orphaned. Firebase's official "Delete User Data" extension is a reasonable
       alternative for the account tree, but does not know about `training-data`.
 
-- [ ] **Privacy policy URL.** Required by App Store Connect, and the app collects
-      email addresses through authentication.
+- [ ] **Privacy policy URL.** Required by App Store Connect, and the app
+      collects email addresses through authentication. You cannot submit
+      without one.
 
-      **Re-read it before publishing.** `docs/PRIVACY.md` was drafted for a
-      version that *might* sync and says "if cloud sync is enabled on your
-      account". That is now simply true for anyone signed in, so the conditional
-      wording should become plain. The in-app copy on Account has already been
-      corrected and says different things to a signed-in user and a local-only
-      one. Drafts are in `docs/PRIVACY.md` and
-      `docs/TERMS.md` - they need a lawyer's review, six placeholders filled
-      (company name, address, jurisdiction, two contact emails, dates) and
-      hosting at a public URL.
+      **Hosting is solved.** `brassandballistics.com` was registered on
+      17 Aug 2026, so the two documents have somewhere to live:
+
+          brassandballistics.com/privacy
+          brassandballistics.com/terms
+
+      **The conditional sync language is fixed.** `docs/PRIVACY.md` was drafted
+      for a version that *might* sync and said "if cloud sync is enabled on your
+      account". It now splits on the thing that actually decides it — whether
+      there is an account at all — and says plainly that a signed-in user's
+      records are copied to the server and a local-only user's are not.
+
+      What is genuinely left, and none of it is code:
+
+      - **Six values to supply, in twenty places.** `[COMPANY LEGAL NAME]` x4,
+        `[PRIVACY CONTACT EMAIL]` x6, `[DATE]` x4, `[POSTAL ADDRESS]` x2,
+        `[SUPPORT EMAIL]` x2, `[JURISDICTION]` x2. To list every occurrence:
+
+            grep -n '\[[A-Z]' docs/PRIVACY.md docs/TERMS.md
+      - **A lawyer's review.** Both documents.
+      - **Publish them** at the two URLs above.
 
 - [ ] **Training Data Contribution: consent is built, upload is not.** The
       Settings toggle, the consent record and the per-target stamping all exist

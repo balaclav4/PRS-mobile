@@ -36,9 +36,15 @@ password in readable form.
 Shooting sessions, shot coordinates, rifles, loads, dope cards, load
 development projects, round counts and your unit and appearance preferences.
 
-This is stored **on your device**. If cloud sync is enabled on your account, a
-copy is stored in our database so it can reach your other devices. It is
-associated with your account and is not shared with anyone else.
+This is stored **on your device**.
+
+**If you use the App with an account,** a copy is also stored in our database
+under your account identifier, so that it reaches your other devices and
+survives losing this one. It is associated with your account and is not shared
+with anyone else.
+
+**If you chose to use the App without an account,** none of it leaves your
+device, and we hold nothing about you at all.
 
 ### 1.3 Target photographs - only if you opt in
 
