@@ -137,6 +137,7 @@ different questions and the second one is the one that matters.
 | MCRP 3-01A | US Marine Corps, public domain | Field method for wind, ranging and holds. Quotable **with citation**, unlike the commercial titles. |
 | NOAA/NCEI World Magnetic Model | Public domain, reissued every five years | Magnetic declination. Wanted because Coriolis needs a *true* azimuth and a shooter reads a magnetic one off a compass — currently the app just asks and hopes. |
 | DTIC / BRL technical reports (McCoy and others) | US Government works, public domain | Measured drag data for standard and military projectiles, and the derivations behind the fits this app uses. |
+| McDrag (McCoy, Dec 1974, BRL) | US Government work, public domain | A drag curve from the bullet's measured shape, with no ballistic coefficient anywhere. Ported line by line from McCoy's published listing into `lib/mcdrag.js` on 16 Aug 2026, original line numbers kept in the comments. Validated against the G1 and G7 tables, which it never sees: a boat-tail shape lands on G7 at i = 0.96 with 3.4% variation across Mach 1-3, a flat-base shape on G1 at 0.81. It is an estimate from geometry, not a measurement, and McCoy's own diagnostics for the shapes it was not fitted to are reproduced rather than dropped. |
 
 **Not ours to ship, whatever the wording elsewhere.**
 
