@@ -12,7 +12,7 @@ rejection. Better done before release than after.
 
 - [x] Display name, permission strings, login header, settings version line,
       problem-report header.
-- [x] `bundleIdentifier` and `package` are now `com.maxwellsimons.brassballistics`.
+- [x] `bundleIdentifier` and `package` are now `com.brassandballistics.app`.
       This had to happen before release, because it is permanent afterwards.
 
       **Not** `com.onpaper.app`, which was tried first and rejected by Apple:
@@ -25,9 +25,17 @@ rejection. Better done before release than after.
       the prefix entirely rather than trying `com.onpaper.rifle` next and
       burning another round trip.
 
-      Namespacing to the developer account is both idiomatic for an Individual
-      Apple team and guaranteed unique, since nobody else registers under
-      somebody else's name. It is invisible to users, so it costs nothing.
+      It was briefly `com.maxwellsimons.brassballistics`, namespaced to the
+      developer account because that is guaranteed unique — nobody else
+      registers under somebody else's name. Once `brassandballistics.com` and
+      `.app` were registered on 17 Aug 2026 the reverse-DNS convention applied
+      properly, and an identifier carrying the brand rather than a person's
+      name is the one worth having permanently.
+
+      **If Apple rejects it** on the next interactive iOS build, the way
+      `com.onpaper.app` was rejected, fall back to
+      `com.maxwellsimons.brassballistics` — one line in `app.json`, and it
+      cannot collide.
 
       Worth noting as a weak signal about the name: somebody thought
       `com.onpaper.app` was worth reserving. It does not block the App Store
@@ -49,8 +57,9 @@ rejection. Better done before release than after.
       handloaders", the same niche.
 
       Brass & Ballistics was checked before adoption rather than after: no App
-      Store listing leads with the name, and `brassandballistics.app` and
-      `.com` are both unregistered. Method that finally worked, for next time —
+      Store listing leads with the name, and both `brassandballistics.com` and
+      `brassandballistics.app` were free — and are now registered. Method that
+      finally worked, for next time —
       Apple's own catalogue plus authoritative DNS, not a search engine:
 
           curl "https://itunes.apple.com/search?term=<name>&entity=software"
@@ -68,8 +77,8 @@ rejection. Better done before release than after.
       leave it, but do not change one without the other.
 
 - [ ] **The next iOS build needs new credentials.** A new bundle identifier
-      means a new Apple App ID and a new provisioning profile; the existing
-      profile is for `com.prsprecision.app` and cannot be reused. EAS will
+      means a new Apple App ID and a new provisioning profile; no profile
+      exists for `com.brassandballistics.app` yet. EAS will
       create them, but it may need an interactive run rather than
       `--non-interactive`.
 
