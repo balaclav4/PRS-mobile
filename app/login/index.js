@@ -57,7 +57,11 @@ export default function LoginScreen() {
               <Target size={40} color="#fff" />
             </View>
             <Text style={[s.appName, { color: colors.tx }]}>Brass & Ballistics</Text>
-            <Text style={[s.tagline, { color: colors.mut }]}>Measure groups. Track loads.{'\n'}Shoot tighter.</Text>
+            {/* Two jobs, so two lines. The first says what the app does, which
+                a login screen owes somebody who has never opened it before.
+                The second is the point of it: not the number on the box, what
+                your rifle actually put on the paper. */}
+            <Text style={[s.tagline, { color: colors.mut }]}>Measure groups. Track loads.{'\n'}Proof on paper.</Text>
 
             <View style={s.form}>
               <View>
