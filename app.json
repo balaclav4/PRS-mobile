@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PRS Precision",
+    "name": "On Paper",
     "slug": "prs-precision",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -11,8 +11,8 @@
       "supportsTablet": false,
       "bundleIdentifier": "com.prsprecision.app",
       "infoPlist": {
-        "NSCameraUsageDescription": "PRS Precision needs camera access to photograph your targets for shot group analysis.",
-        "NSPhotoLibraryUsageDescription": "PRS Precision needs photo library access to import target photos for shot group analysis.",
+        "NSCameraUsageDescription": "On Paper needs camera access to photograph your targets for shot group analysis.",
+        "NSPhotoLibraryUsageDescription": "On Paper needs photo library access to import target photos for shot group analysis.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "buildNumber": "1"
@@ -43,13 +43,13 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "PRS Precision needs camera access to photograph your targets."
+          "cameraPermission": "On Paper needs camera access to photograph your targets."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "PRS Precision needs photo library access to import target photos."
+          "photosPermission": "On Paper needs photo library access to import target photos."
         }
       ],
       "expo-sharing",

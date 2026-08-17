@@ -562,7 +562,7 @@ export default function CaptureScreen() {
       // identical to the user backing out.
       const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (!perm.granted) {
-        const msg = 'Photo library access is needed to import a target. Enable it in Settings for PRS Precision.';
+        const msg = 'Photo library access is needed to import a target. Enable it in Settings for On Paper.';
         if (Platform.OS === 'web') alert(msg); else Alert.alert('Photo Permission', msg);
         return;
       }
@@ -580,7 +580,7 @@ export default function CaptureScreen() {
     try {
       const perm = await ImagePicker.requestCameraPermissionsAsync();
       if (!perm.granted) {
-        const msg = 'Camera access is needed to photograph targets. Enable it in Settings for PRS Precision.';
+        const msg = 'Camera access is needed to photograph targets. Enable it in Settings for On Paper.';
         if (Platform.OS === 'web') alert(msg); else Alert.alert('Camera Permission', msg);
         return;
       }
