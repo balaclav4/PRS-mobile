@@ -56,7 +56,7 @@ export default function LoginScreen() {
             <View style={s.logo}>
               <Target size={40} color="#fff" />
             </View>
-            <Text style={[s.appName, { color: colors.tx }]}>On Paper</Text>
+            <Text style={[s.appName, { color: colors.tx }]}>Brass & Ballistics</Text>
             <Text style={[s.tagline, { color: colors.mut }]}>Measure groups. Track loads.{'\n'}Shoot tighter.</Text>
 
             <View style={s.form}>

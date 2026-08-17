@@ -285,7 +285,7 @@ export default function SettingsScreen() {
           <Text style={[s.signOutText, { color: colors.dngt }]}>Sign Out</Text>
         </TouchableOpacity>
 
-        <Text style={[s.version, { color: colors.fnt }]}>On Paper · v1.0.0</Text>
+        <Text style={[s.version, { color: colors.fnt }]}>Brass & Ballistics · v1.0.0</Text>
       </ScrollView>
 
       {/* The confirmation. A restore replaces everything, so it is shown as a

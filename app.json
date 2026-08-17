@@ -1,24 +1,24 @@
 {
   "expo": {
-    "name": "On Paper",
+    "name": "Brass & Ballistics",
     "slug": "prs-precision",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "on-paper",
+    "scheme": "brass-ballistics",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.maxwellsimons.onpaper",
+      "bundleIdentifier": "com.maxwellsimons.brassballistics",
       "infoPlist": {
-        "NSCameraUsageDescription": "On Paper needs camera access to photograph your targets for shot group analysis.",
-        "NSPhotoLibraryUsageDescription": "On Paper needs photo library access to import target photos for shot group analysis.",
+        "NSCameraUsageDescription": "Brass & Ballistics needs camera access to photograph your targets for shot group analysis.",
+        "NSPhotoLibraryUsageDescription": "Brass & Ballistics needs photo library access to import target photos for shot group analysis.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "buildNumber": "1"
     },
     "android": {
-      "package": "com.maxwellsimons.onpaper",
+      "package": "com.maxwellsimons.brassballistics",
       "adaptiveIcon": {
         "backgroundColor": "#EFE9DC",
         "foregroundImage": "./assets/android-icon-foreground.png",
@@ -43,13 +43,13 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "On Paper needs camera access to photograph your targets."
+          "cameraPermission": "Brass & Ballistics needs camera access to photograph your targets."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "On Paper needs photo library access to import target photos."
+          "photosPermission": "Brass & Ballistics needs photo library access to import target photos."
         }
       ],
       "expo-sharing",

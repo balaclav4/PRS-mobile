@@ -3,16 +3,16 @@
 State as of the last commit. Items are marked done only where they have actually
 been verified, not merely written.
 
-## Renamed to On Paper, 17 Aug 2026
+## Renamed to Brass & Ballistics, 17 Aug 2026
 
-The app was `PRS Precision`. It is now **On Paper** — the Precision Rifle
+The app was `PRS Precision`. It is now **Brass & Ballistics** — the Precision Rifle
 Series is a real branded competition organisation, and shipping an unaffiliated
 app under its initials invites both a trademark complaint and an App Review
 rejection. Better done before release than after.
 
 - [x] Display name, permission strings, login header, settings version line,
       problem-report header.
-- [x] `bundleIdentifier` and `package` are now `com.maxwellsimons.onpaper`.
+- [x] `bundleIdentifier` and `package` are now `com.maxwellsimons.brassballistics`.
       This had to happen before release, because it is permanent afterwards.
 
       **Not** `com.onpaper.app`, which was tried first and rejected by Apple:
@@ -33,20 +33,36 @@ rejection. Better done before release than after.
       `com.onpaper.app` was worth reserving. It does not block the App Store
       *name*, which is a separate namespace, but it means someone else has had
       the same idea.
-- [x] `scheme` is now `on-paper`.
-- [x] Backup format is `on-paper-backup`, and `prs-precision-backup` is still
-      accepted on read. `readBackup` compared the format for equality, so
+- [x] `scheme` is now `brass-ballistics`.
+- [x] Backup format is `brass-ballistics-backup`. Both `prs-precision-backup`
+      and `on-paper-backup` are still accepted on read. `readBackup` compared the format for equality, so
       renaming the constant alone would have made every existing backup fail
       with "that is not a backup" — the whole restore path gone, discovered at
       the moment somebody needed it.
+
+      **On Paper was tried and abandoned.** It looked clean because the check
+      was scoped to shooting, and App Store names are a *global* namespace. A
+      proper look found two listings leading with it — one from a company called
+      On Paper Sports, LLC — plus `onpaper.app`, `onpaper.com` and the
+      `com.onpaper.app` identifier all taken. **Freebore** failed the same way
+      and worse: `freebore.app` is a live product, "interior ballistics for
+      handloaders", the same niche.
+
+      Brass & Ballistics was checked before adoption rather than after: no App
+      Store listing leads with the name, and `brassandballistics.app` and
+      `.com` are both unregistered. Method that finally worked, for next time —
+      Apple's own catalogue plus authoritative DNS, not a search engine:
+
+          curl "https://itunes.apple.com/search?term=<name>&entity=software"
+          dig +short NS <name>.app
 - [ ] **`slug` is deliberately still `prs-precision`.** It is the EAS project's
       identity, not the app's, and it is invisible to users. Changing it breaks
       every EAS command outright:
 
           Slug for project identified by "extra.eas.projectId"
-          (prs-precision) does not match the "slug" field (on-paper)
+          (prs-precision) does not match the "slug" field (brass-ballistics)
 
-      To tidy it: rename the project to `on-paper` at
+      To tidy it: rename the project to `brass-ballistics` at
       expo.dev/accounts/maxwell-simons/projects/prs-precision, *then* change
       the slug here. There is no CLI for the rename. Purely cosmetic — do it or
       leave it, but do not change one without the other.
