@@ -1,11 +1,11 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Target } from 'lucide-react-native';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { useTheme } from '../../lib/theme';
 import { useAuth } from '../../store/auth';
 import { useData } from '../../store/data';
+import BrandMark from '../../components/BrandMark';
 
 export default function LoginScreen() {
   const { colors } = useTheme();
@@ -54,7 +54,7 @@ export default function LoginScreen() {
         <View style={s.content}>
           <View style={s.center}>
             <View style={s.logo}>
-              <Target size={40} color="#fff" />
+              <BrandMark size={76} radius={22} />
             </View>
             <Text style={[s.appName, { color: colors.tx }]}>Brass & Ballistics</Text>
             {/* Two jobs, so two lines. The first says what the app does, which
@@ -176,8 +176,7 @@ const s = StyleSheet.create({
   center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
   logo: {
     width: 76, height: 76, borderRadius: 22, alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#6D3BEB',
-    shadowColor: 'rgba(109,59,235,0.5)', shadowOffset: { width: 0, height: 16 }, shadowOpacity: 1, shadowRadius: 30, elevation: 8,
+    shadowColor: 'rgba(0,0,0,0.55)', shadowOffset: { width: 0, height: 12 }, shadowOpacity: 1, shadowRadius: 24, elevation: 8,
     marginBottom: 22,
   },
   appName: { fontSize: 28, fontWeight: '800', letterSpacing: -0.5 },
