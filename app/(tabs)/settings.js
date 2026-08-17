@@ -48,7 +48,7 @@ export default function SettingsScreen() {
     setBackingUp(true);
     const text = buildBackup(snapshot(), { appVersion: Constants.expoConfig?.version });
     const stamp = new Date().toISOString().slice(0, 10);
-    await saveCSV(text, `prs-backup-${stamp}.json`, 'application/json');
+    await saveCSV(text, `brass-ballistics-backup-${stamp}.json`, 'application/json');
     setBackingUp(false);
   };
 
