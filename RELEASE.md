@@ -3,6 +3,54 @@
 State as of the last commit. Items are marked done only where they have actually
 been verified, not merely written.
 
+## Renamed to On Paper, 17 Aug 2026
+
+The app was `PRS Precision`. It is now **On Paper** — the Precision Rifle
+Series is a real branded competition organisation, and shipping an unaffiliated
+app under its initials invites both a trademark complaint and an App Review
+rejection. Better done before release than after.
+
+- [x] Display name, permission strings, login header, settings version line,
+      problem-report header.
+- [x] `bundleIdentifier` and `package` are now `com.onpaper.app`. This had to
+      happen before release, because it is permanent afterwards.
+- [x] `scheme` is now `on-paper`.
+- [x] Backup format is `on-paper-backup`, and `prs-precision-backup` is still
+      accepted on read. `readBackup` compared the format for equality, so
+      renaming the constant alone would have made every existing backup fail
+      with "that is not a backup" — the whole restore path gone, discovered at
+      the moment somebody needed it.
+- [ ] **`slug` is deliberately still `prs-precision`.** It is the EAS project's
+      identity, not the app's, and it is invisible to users. Changing it breaks
+      every EAS command outright:
+
+          Slug for project identified by "extra.eas.projectId"
+          (prs-precision) does not match the "slug" field (on-paper)
+
+      To tidy it: rename the project to `on-paper` at
+      expo.dev/accounts/maxwell-simons/projects/prs-precision, *then* change
+      the slug here. There is no CLI for the rename. Purely cosmetic — do it or
+      leave it, but do not change one without the other.
+
+- [ ] **The next iOS build needs new credentials.** A new bundle identifier
+      means a new Apple App ID and a new provisioning profile; the existing
+      profile is for `com.prsprecision.app` and cannot be reused. EAS will
+      create them, but it may need an interactive run rather than
+      `--non-interactive`.
+
+- [ ] **Back up the phone before installing the new build.** A changed bundle
+      identifier makes this a *different app* to the OS: it installs alongside
+      the old one with an empty database rather than updating it. Sync is
+      supposed to repopulate it, and sync has never once been proven to work on
+      hardware — so export a backup from the old app first, and do not delete
+      the old app until the new one has the data.
+
+- [ ] **Check the Firebase API key restrictions.** Auth here uses the Firebase
+      *web* SDK, which is not keyed to a bundle identifier, so this should be
+      unaffected. But if the API key was ever restricted to
+      `com.prsprecision.app` in Google Cloud console, sign-in will start
+      failing on native and nowhere else.
+
 ## Blocking
 
 - [ ] **Run on real hardware.** Nothing in this app has ever executed outside
