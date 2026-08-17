@@ -16,6 +16,10 @@ const gates = [
   // The static check above catches mismatches between statements; this catches
   // mistakes inside one, which otherwise first execute on a phone at launch.
   'scripts/check-sqlite.mjs',
+  // Every field a put* reads must be one sync can actually deliver. The bug
+  // this exists for lost the structured half of every record on each round
+  // trip and errored nowhere, because all of those columns are nullable.
+  'scripts/check-roundtrip.mjs',
 ];
 
 /**

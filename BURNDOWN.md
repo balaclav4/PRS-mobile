@@ -437,20 +437,17 @@ The shooter's data was never on the server at any point. The only thing that
 would have saved it was happening to open Account and tap Sync before deleting
 the app, which is not a thing anyone would know to do.
 
-### S2. "Last synced" is truthful about the wrong thing
+### S2. ~~"Last synced" is truthful about the wrong thing~~ — I got this wrong
 
-`app/(tabs)/account.js:216` shows `Last synced <time>` whenever the result is
-`ok`, without regard to `pushed` and `pulled` — both of which are returned by
-`runSync` and both of which are zero in the case above.
+**Corrected 16 Aug 2026.** The original entry claimed the status line reported
+success "without regard to `pushed` and `pulled`". That was wrong:
+`app/(tabs)/account.js:218` already branched on both and said "nothing had
+changed" when they were zero. I recorded a fault that was not there.
 
-So the message is accurate (a sync did run, and did complete) and completely
-misleading (it moved nothing, and there is nothing on the server). This is what
-turned a silent gap into a confident false promise, and it is why the report
-says "even after it says that it has synced".
-
-The status line must distinguish *a sync happened* from *your data is on the
-server*. "Last synced 14:02 — nothing to send" is the honest version of what
-the app currently reports as unqualified success.
+What is true is milder and worth keeping. On a fresh install against an account
+that has never received anything, "nothing had changed" is accurate and reads
+as reassurance in the one case that most needs not to. Reworded to state the
+same fact without the comfort. The cause of the report was S1 and S3.
 
 ### S3. Even a manual sync drops every shot
 

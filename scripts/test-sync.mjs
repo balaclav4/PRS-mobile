@@ -13,7 +13,7 @@
  *
  * Run: node scripts/test-sync.mjs
  */
-import { reconcile, reconcileAll, tombstone, touch } from '../lib/sync.js';
+import { reconcile, reconcileAll, tombstone, touch, syncStamp } from '../lib/sync.js';
 
 let fails = 0;
 const check = (name, ok, detail = '') => {
@@ -175,6 +175,54 @@ console.log('\ntimestamp shapes and bad input');
     reconcile().toPush.length === 0 && reconcileAll().upToDate === true);
   check('  touch stamps a record', touch(rec('a', T0), T2).updatedAt === T2);
   check('  tombstone refuses a record with no id', tombstone({}) === null);
+}
+
+
+console.log('\nwhat a record is stamped with, and whether sync then converges');
+{
+  // The real function lib/db writes through, not a copy of it. A fixture built
+  // to the same convention as the bug would have agreed with the bug.
+  const [own, at, del] = syncStamp({ updatedAt: 2000, deleted: 1 }, {}, 'uid-a', 5000);
+  check('  a local edit is stamped now and alive', own === 'uid-a' && at === 5000 && del === 0,
+    `${own} ${at} ${del}`);
+
+  const [own2, at2, del2] = syncStamp({ updatedAt: 2000, deleted: 1 }, { fromSync: true }, 'uid-a', 5000);
+  check('  a record from sync keeps its own timestamp and its tombstone',
+    own2 === 'uid-a' && at2 === 2000 && del2 === 1, `${own2} ${at2} ${del2}`);
+
+  const [, at3] = syncStamp({ deleted: 0 }, { fromSync: true }, 'uid-a', 5000);
+  check('  and falls back to now if the record carries no timestamp', at3 === 5000);
+
+  // Convergence. Pull a record, write it the way applyPull does, and reconcile
+  // again against the same server: there must be nothing left to do. Stamping
+  // pulled records with Date.now() made this push forever.
+  const remote = [{ id: 'r1', name: 'Impact', updatedAt: 2000 }];
+  const first = reconcile([], remote, null);
+  check('  a first sync pulls the record', first.toPull.length === 1 && first.toPush.length === 0);
+
+  const written = first.toPull.map(rec => {
+    const [ownerId, updatedAt, deleted] = syncStamp(rec, { fromSync: true }, 'uid-a', 9000);
+    return { ...rec, ownerId, updatedAt, deleted };
+  });
+  const second = reconcile(written, remote, 9000);
+  check('  and the next sync has nothing to send back',
+    second.toPush.length === 0 && second.toPull.length === 0,
+    `push ${second.toPush.length}, pull ${second.toPull.length}`);
+
+  // The same for a tombstone: it must stay dead on arrival.
+  const deadRemote = [{ id: 's1', deleted: true, updatedAt: 3000 }];
+  const pulled = reconcile([{ id: 's1', name: 'group', updatedAt: 1000 }], deadRemote, 2000);
+  check('  a server tombstone beats an older local record', pulled.toPull.length === 1);
+  const afterDelete = pulled.toPull.map(rec => {
+    const [ownerId, updatedAt, deleted] = syncStamp(rec, { fromSync: true }, 'uid-a', 9000);
+    return { ...rec, ownerId, updatedAt, deleted };
+  });
+  check('  and is written as still deleted, not resurrected',
+    afterDelete[0].deleted === 1 && afterDelete[0].updatedAt === 3000,
+    `deleted ${afterDelete[0].deleted}, at ${afterDelete[0].updatedAt}`);
+  const third = reconcile(afterDelete, deadRemote, 9000);
+  check('  so the deletion is not pushed back over the server as alive',
+    third.toPush.length === 0, `push ${third.toPush.length}`);
 }
 
 console.log('\n' + (fails === 0 ? 'all checks passed' : `${fails} check(s) failed`));

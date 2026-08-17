@@ -1,9 +1,19 @@
 import { createContext, useContext, useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
 import * as db from '../lib/db';
 import { useAuth } from './auth';
 import { runSync } from '../lib/syncremote';
 import { DEFAULT_UNITS, groupUnitLabel, inchesToUnit } from '../lib/units';
 import { noConsent, grantConsent, revokeConsent } from '../lib/consent';
+
+/**
+ * How long a write waits before it asks for a sync.
+ *
+ * Long enough that a burst of writes from one interaction becomes one round
+ * trip, short enough that a shooter who records a group and immediately closes
+ * the app has already sent it. Backgrounding flushes early regardless.
+ */
+const SYNC_DEBOUNCE_MS = 4000;
 
 const SEED_RIFLES = [
   { id: 'r1', name: 'Impact 737R', cartridge: '6.5 Creedmoor', barrelLength: '26"', twist: '1:8', notes: 'Bartlein barrel' },
@@ -180,7 +190,45 @@ export function DataProvider({ children }) {
 
   // Writes go to React state first (so the UI is immediate) and are persisted
   // in the background; a storage failure never blocks the interaction.
-  const persist = (fn) => { fn().catch(e => console.warn('[db] write failed:', e.message)); };
+  //
+  // Every write also asks for a sync. It used to not, and sync ran exactly
+  // once per sign-in: a shooter signed in, recorded a season, and none of it
+  // was ever pushed, because the only other trigger was a button on a screen
+  // nobody had a reason to open. Reinstalling then found an empty server and
+  // reported a perfectly successful sync of nothing.
+  const persist = (fn) => {
+    fn().catch(e => console.warn('[db] write failed:', e.message));
+    requestSync();
+  };
+
+  /**
+   * Ask for a sync shortly.
+   *
+   * Debounced, because a single interaction can be several writes - saving a
+   * session writes the session and touches its project - and each one asking
+   * for its own round trip would be wasteful rather than safer.
+   *
+   * Through a ref rather than calling syncNow directly: syncNow is declared
+   * further down, and persist is referenced by callbacks defined between the
+   * two. Reaching for it by name here is exactly the "cannot access before
+   * initialization" this file has been bitten by before.
+   */
+  const syncNowRef = useRef(null);
+  const syncTimer = useRef(null);
+
+  const requestSync = useCallback(() => {
+    if (syncTimer.current) clearTimeout(syncTimer.current);
+    syncTimer.current = setTimeout(() => {
+      syncTimer.current = null;
+      syncNowRef.current?.();
+    }, SYNC_DEBOUNCE_MS);
+  }, []);
+
+  /** Send anything outstanding now, without waiting out the debounce. */
+  const flushSync = useCallback(() => {
+    if (syncTimer.current) { clearTimeout(syncTimer.current); syncTimer.current = null; }
+    syncNowRef.current?.();
+  }, []);
 
   const addSession = useCallback((session) => {
     setSessions(prev => [session, ...prev]);
@@ -361,12 +409,18 @@ export function DataProvider({ children }) {
     const r = await runSync({
       local,
       lastSyncAt: lastSyncRef.current,
+      // fromSync, so each record keeps the timestamp and the tombstone it
+      // arrived with. Without it every pulled record was stamped as a local
+      // edit made now: tombstones came back to life and were pushed over the
+      // server's, and unchanged records looked newer than the server's copy
+      // and were re-uploaded on every sync from then on.
       applyPull: async (pulls) => {
-        for (const rec of pulls.rifles || []) await db.putRifle(rec);
-        for (const rec of pulls.loads || []) await db.putLoad(rec);
-        for (const rec of pulls.sessions || []) await db.putSession(rec);
-        for (const rec of pulls.projects || []) await db.putProject(rec);
-        for (const rec of pulls.dopeCards || []) await db.putDopeCard(rec);
+        const fromSync = { fromSync: true };
+        for (const rec of pulls.rifles || []) await db.putRifle(rec, fromSync);
+        for (const rec of pulls.loads || []) await db.putLoad(rec, fromSync);
+        for (const rec of pulls.sessions || []) await db.putSession(rec, fromSync);
+        for (const rec of pulls.projects || []) await db.putProject(rec, fromSync);
+        for (const rec of pulls.dopeCards || []) await db.putDopeCard(rec, fromSync);
       },
     });
     if (r.ok) {
@@ -386,6 +440,25 @@ export function DataProvider({ children }) {
     }
     return r;
   }, [user?.uid]);
+
+  // Published for requestSync/flushSync, which cannot name syncNow directly.
+  syncNowRef.current = syncNow;
+
+  /**
+   * Send what is outstanding when the app goes to the background.
+   *
+   * This is the one that covers the reported failure: record a group, close
+   * the app, delete it. A debounce alone does not survive the process going
+   * away, and 'inactive' is included because iOS passes through it on the way
+   * out and does not always reach 'background' before the app is killed.
+   */
+  useEffect(() => {
+    if (!user?.uid) return;
+    const sub = AppState.addEventListener('change', (state) => {
+      if (state === 'background' || state === 'inactive') flushSync();
+    });
+    return () => sub.remove();
+  }, [user?.uid, flushSync]);
 
   /**
    * Leave local-only, so the gate asks again.

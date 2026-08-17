@@ -217,7 +217,12 @@ export default function AccountScreen() {
                         ? `Last synced ${new Date(syncState.at).toLocaleString()}`
                           + (syncState.pushed || syncState.pulled
                             ? ` — sent ${syncState.pushed}, received ${syncState.pulled}.`
-                            : ' — nothing had changed.')
+                            // "nothing had changed" was the old wording, and it
+                            // reads as reassurance in the one case that most
+                            // needs not to: a fresh install against an account
+                            // that has never received anything is also nothing
+                            // to send. Same fact, without the comfort.
+                            : ' — nothing to send; this phone and your account already match.')
                         : 'Not synced yet. Tap to sync now.'}
                 </Text>
               </View>
