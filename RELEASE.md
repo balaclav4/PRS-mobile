@@ -95,6 +95,54 @@ rejection. Better done before release than after.
       `com.prsprecision.app` in Google Cloud console, sign-in will start
       failing on native and nowhere else.
 
+## Getting to TestFlight
+
+The `preview` profile builds ad-hoc `.ipa`s for a registered device. TestFlight
+needs the `production` profile, which is store distribution and a different
+provisioning profile — an existing preview build cannot be promoted.
+
+Firebase config for the `production` EAS environment is registered and was
+verified on 18 Aug 2026. A production build missing it would ship local-only
+and look entirely healthy until somebody tried to sign in.
+
+**1. Build.** Interactive, because it creates an Apple App ID, a distribution
+certificate and an App Store provisioning profile for
+`com.brassandballistics.app`:
+
+    npm run eas -- build --platform ios --profile production
+
+**2. Submit.** Creates the App Store Connect record if there is not one:
+
+    npm run eas -- submit --platform ios --profile production
+
+The app *name* must be free on the App Store — names are unique across the
+store, which is exactly how On Paper failed. `Brass & Ballistics` had no
+listing leading with it when checked, but the record is where that is decided.
+
+**3. Internal testing.** Works as soon as the build finishes processing, which
+is usually well under an hour. Up to 100 testers, no review, no privacy policy
+needed — they only have to be users on the App Store Connect team.
+
+**This is also the hardware test.** Nothing in this app has ever executed
+outside a browser. Install the internal build and work through
+`docs/DEVICE-TEST.md` before letting anybody else near it.
+
+**4. External testing** needs Beta App Review, and three things that are not
+ready:
+
+- [ ] **Privacy policy at a public URL.** `brassandballistics.com` is
+      registered and nothing is hosted on it. This is the real gate.
+- [ ] **A demo account.** The app opens on a sign-in gate, so review needs
+      working credentials. "Use it offline" may satisfy them, but supplying an
+      account is the reliable answer.
+- [ ] **Account deletion that works end to end.** Review does check it, and the
+      Cloud Function that removes the Firestore subtree is written and not
+      deployed — see the blocking item above. Internal testing does not care;
+      external review might, and App Store submission certainly will.
+
+Export compliance is already answered: `ITSAppUsesNonExemptEncryption: false`
+is set in `app.json`, so no upload will stop to ask.
+
 ## Blocking
 
 - [ ] **Run on real hardware.** Nothing in this app has ever executed outside
