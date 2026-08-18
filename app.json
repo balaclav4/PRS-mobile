@@ -1,29 +1,35 @@
 {
   "expo": {
-    "name": "PRS Precision",
+    "name": "Brass & Ballistics",
     "slug": "prs-precision",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
-    "scheme": "prs-precision",
+    "scheme": "brass-ballistics",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.prsprecision.app",
+      "bundleIdentifier": "com.brassandballistics.app",
       "infoPlist": {
-        "NSCameraUsageDescription": "PRS Precision needs camera access to photograph your targets for shot group analysis.",
-        "NSPhotoLibraryUsageDescription": "PRS Precision needs photo library access to import target photos for shot group analysis."
-      }
+        "NSCameraUsageDescription": "Brass & Ballistics needs camera access to photograph your targets for shot group analysis.",
+        "NSPhotoLibraryUsageDescription": "Brass & Ballistics needs photo library access to import target photos for shot group analysis.",
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "buildNumber": "1"
     },
     "android": {
-      "package": "com.prsprecision.app",
+      "package": "com.brassandballistics.app",
       "adaptiveIcon": {
-        "backgroundColor": "#5A2FD0",
+        "backgroundColor": "#EFE9DC",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "permissions": ["android.permission.CAMERA"]
+      "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO"
+      ],
+      "versionCode": 1
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -37,15 +43,35 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "PRS Precision needs camera access to photograph your targets."
+          "cameraPermission": "Brass & Ballistics needs camera access to photograph your targets."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "PRS Precision needs photo library access to import target photos."
+          "photosPermission": "Brass & Ballistics needs photo library access to import target photos."
         }
-      ]
-    ]
+      ],
+      "expo-sharing",
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 180,
+          "resizeMode": "contain",
+          "backgroundColor": "#F4F3F8",
+          "dark": {
+            "backgroundColor": "#0F0E14"
+          }
+        }
+      ],
+      "expo-asset"
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "7e277059-8f2b-4f93-8b39-d3b91dd2d34a"
+      }
+    }
   }
 }

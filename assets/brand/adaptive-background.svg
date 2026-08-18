@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- Android adaptive icon, background layer: the paper. The launcher
+       parallaxes this against the foreground, so it stays flat. -->
+  <rect width="1024" height="1024" fill="#EFE9DC"/>
+</svg>

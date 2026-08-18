@@ -39,3 +39,7 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Claude Code local settings
+.claude/settings.local.json
+test-images/*-annotated.png

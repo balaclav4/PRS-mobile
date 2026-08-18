@@ -2,7 +2,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Crosshair, ChevronRight } from 'lucide-react-native';
 import { useTheme, groupColor } from '../lib/theme';
 
-export default function SessionRow({ name, date, rifle, meta, best, onPress }) {
+export default function SessionRow({
+  bestLabelText, name, date, rifle, meta, best, onPress }) {
   const { colors } = useTheme();
   return (
     <TouchableOpacity onPress={onPress} style={[s.row, { backgroundColor: colors.card, borderColor: colors.bd }]}>
@@ -15,7 +16,7 @@ export default function SessionRow({ name, date, rifle, meta, best, onPress }) {
         {meta && <Text style={[s.meta, { color: colors.fnt }]}>{meta}</Text>}
       </View>
       <View style={s.right}>
-        <Text style={[s.best, { color: groupColor(best, colors), fontFamily: 'JetBrainsMono_700Bold' }]}>{best}"</Text>
+        <Text style={[s.best, { color: groupColor(best, colors), fontFamily: 'JetBrainsMono_700Bold' }]}>{bestLabelText}</Text>
         <Text style={[s.bestLabel, { color: colors.fnt }]}>best</Text>
       </View>
       <ChevronRight size={17} color={colors.fnt} />

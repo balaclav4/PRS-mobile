@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    App icon: an actual paper target rather than a symbol of one. Buff stock,
+    black aiming black, buff scoring rings, and three torn holes off the bull.
+
+    It is the only candidate that is not a dark tile, which on a home screen
+    full of dark tiles is the whole point of it.
+
+    Full bleed and square on purpose: iOS applies its own superellipse mask,
+    so corners rounded here would be rounded twice.
+  -->
+  <rect width="1024" height="1024" fill="#EFE9DC"/>
+
+  <circle cx="512" cy="512" r="336" fill="#17161D"/>
+
+  <!--
+    Two scoring rings, not four: beyond two they moire into a flat disc at the
+    size an icon actually lives at. They are cut out of the black rather than
+    drawn on it, which is how a real target is printed.
+  -->
+  <g stroke="#EFE9DC" stroke-width="28" fill="none">
+    <circle cx="512" cy="512" r="244"/>
+    <circle cx="512" cy="512" r="152"/>
+  </g>
+  <circle cx="512" cy="512" r="60" fill="#EFE9DC"/>
+
+  <!--
+    Three shots, unequal and barely touching, well off the bull - which is the
+    thing this app measures, not the fact of hitting a target. Equal circles at
+    equal overlap read as a trefoil; the variation is what makes them read as
+    holes. Kept clear of the bull: overlapping it looked like a rendering fault
+    rather than a shot.
+  -->
+  <g fill="#F0872B">
+    <circle cx="352" cy="368" r="56"/>
+    <circle cx="442" cy="336" r="52"/>
+    <circle cx="376" cy="452" r="54"/>
+  </g>
+</svg>

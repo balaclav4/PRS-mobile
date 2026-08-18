@@ -1,18 +1,100 @@
-import { View, Text, TouchableOpacity, Modal, Pressable, StyleSheet, Platform } from 'react-native';
-import { Wind, FlaskConical, Wrench, Settings, LogOut, ChevronRight } from 'lucide-react-native';
+import { View, Text, TouchableOpacity, Pressable, StyleSheet, Platform, Modal, Animated, PanResponder } from 'react-native';
+import { Wind, FlaskConical, Wrench, Settings, LogOut, ChevronRight, BookOpen, Crosshair } from 'lucide-react-native';
 import { useRouter } from 'expo-router';
+import { useRef, useCallback } from 'react';
 import { useTheme } from '../lib/theme';
+import { useAuth } from '../store/auth';
+import { useData } from '../store/data';
+
+/** How far the sheet travels to leave the screen. */
+const SHEET_TRAVEL = 600;
 
 const items = [
   { icon: Wind, label: 'Ballistics', sub: 'Dope card & drops', route: '/ballistics' },
+  { icon: BookOpen, label: 'Dope Cards', sub: 'Saved solutions', route: '/dopecards' },
   { icon: FlaskConical, label: 'Load Development', sub: '8-step reloading wizard', route: '/reloading' },
   { icon: Wrench, label: 'Equipment', sub: 'Rifles & loads', route: '/equipment' },
+  { icon: Crosshair, label: 'Scope Evaluation', sub: 'Tracking & return to zero', route: '/scope' },
   { icon: Settings, label: 'Settings', sub: 'Units, export, appearance', route: '/settings' },
 ];
 
+/**
+ * The More sheet.
+ *
+ * Rendered inside a Modal rather than as a sibling of the navigator. As a
+ * sibling it relied on zIndex, which Android ignores in favour of elevation —
+ * and the tab bar became an elevated absolute pill, so it could sit on top of
+ * the sheet and swallow the taps meant to dismiss it. A Modal is always above
+ * native content and does not compete.
+ *
+ * Dismissal has three routes now, because it previously had one that could be
+ * blocked: drag the sheet down, tap outside it, or press back on Android. A
+ * sheet with a grab handle that cannot be grabbed reads as broken even when
+ * tapping outside would have worked.
+ */
 export default function MoreSheet({ visible, onClose }) {
   const { colors } = useTheme();
+  const { user, signOut } = useAuth();
+  const { exitLocalOnly } = useData();
   const router = useRouter();
+  const translateY = useRef(new Animated.Value(0)).current;
+
+  /**
+   * Put the sheet back at rest, then close it.
+   *
+   * The reset belongs here, on the way out, not on the way in. It used to
+   * happen in an effect when `visible` turned true - which runs *after* that
+   * render, so the sheet was laid out once at whatever offset the last drag
+   * left behind. Swipe it away and reopen it and you got a sheet sitting most
+   * of the way down the screen, showing only its first row.
+   *
+   * Resetting as it closes means the value is always zero for as long as the
+   * sheet is unmounted, so there is no stale offset for the next open to
+   * inherit and no dependence on effect ordering.
+   */
+  const settle = useCallback(() => {
+    translateY.setValue(0);
+    onClose();
+  }, [onClose, translateY]);
+
+  const slideAway = useCallback((duration) => {
+    Animated.timing(translateY, { toValue: SHEET_TRAVEL, duration, useNativeDriver: true })
+      // Not conditional on `finished`. Gating the close on a completed
+      // animation meant an interrupted one left the sheet open at an offset
+      // with nothing to bring it back - the same stuck state by another route.
+      .start(() => settle());
+  }, [settle, translateY]);
+
+  const close = () => slideAway(180);
+
+  /** Back to fully open, for a drag that did not go far enough. */
+  const springBack = () => {
+    Animated.spring(translateY, { toValue: 0, useNativeDriver: true, bounciness: 4 }).start();
+  };
+
+  const pan = useRef(
+    PanResponder.create({
+      // Only claim the gesture once it is clearly a downward drag, or the rows
+      // underneath stop being tappable.
+      onMoveShouldSetPanResponder: (_e, g) => g.dy > 6 && Math.abs(g.dy) > Math.abs(g.dx),
+      onPanResponderMove: (_e, g) => {
+        if (g.dy > 0) translateY.setValue(g.dy);
+      },
+      onPanResponderRelease: (_e, g) => {
+        // Far enough, or fast enough — a flick should dismiss without needing
+        // the full distance.
+        if (g.dy > 90 || g.vy > 0.8) slideAway(160);
+        else springBack();
+      },
+      // A gesture the sheet loses rather than finishes. Without this the drag
+      // offset simply stayed where the finger left it, open and half deployed,
+      // with no release ever arriving to tidy it up.
+      onPanResponderTerminate: () => springBack(),
+      onPanResponderTerminationRequest: () => false,
+    })
+  ).current;
+
+  if (!visible) return null;
 
   const go = (route) => {
     onClose();
@@ -20,13 +102,33 @@ export default function MoreSheet({ visible, onClose }) {
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
-      <Pressable style={s.overlay} onPress={onClose}>
-        <Pressable
-          style={[s.sheet, { backgroundColor: colors.bg, borderTopLeftRadius: 26, borderTopRightRadius: 26 }]}
-          onPress={(e) => e.stopPropagation()}
+    <Modal
+      visible={visible}
+      transparent
+      animationType="fade"
+      onRequestClose={close}   // Android hardware back
+      statusBarTranslucent
+    >
+      <View style={s.overlay}>
+        <Pressable style={s.backdrop} onPress={close} />
+        <Animated.View
+          style={[
+            s.sheet,
+            {
+              backgroundColor: colors.bg,
+              borderTopLeftRadius: 26,
+              borderTopRightRadius: 26,
+              transform: [{ translateY }],
+            },
+          ]}
+          {...pan.panHandlers}
         >
-          <View style={[s.handle, { backgroundColor: colors.bd }]} />
+          {/* Generous hit area around the handle: the visible bar is 5px tall,
+              which is far below a comfortable touch target. */}
+          <View style={s.handleArea}>
+            <View style={[s.handle, { backgroundColor: colors.bd }]} />
+          </View>
+
           <Text style={[s.title, { color: colors.tx }]}>More</Text>
           <View style={s.list}>
             {items.map((item) => (
@@ -41,25 +143,54 @@ export default function MoreSheet({ visible, onClose }) {
                 <ChevronRight size={18} color={colors.fnt} />
               </TouchableOpacity>
             ))}
-            <TouchableOpacity onPress={onClose} style={[s.row, { backgroundColor: colors.card, borderColor: colors.bd }]}>
-              <View style={[s.iconWrap, { backgroundColor: colors.dngs }]}>
-                <LogOut size={20} color={colors.dngt} />
+            {/* This said Sign Out and only navigated to the login screen - it
+                never signed anybody out. It looked like it worked because the
+                login screen sends a signed-in user away again, so the shooter
+                landed back on the dashboard still signed in, which reads as
+                "it went back home".
+
+                It also has to say the right thing: somebody working offline is
+                not signed in, so offering to sign them out is nonsense. For
+                them it is the way *in*. */}
+            <TouchableOpacity
+              onPress={async () => {
+                onClose();
+                if (user) await signOut();
+                // Clears local-only as well, so the gate asks again rather than
+                // waving through a session that has just been ended.
+                exitLocalOnly();
+              }}
+              style={[s.row, { backgroundColor: colors.card, borderColor: colors.bd }]}
+            >
+              <View style={[s.iconWrap, { backgroundColor: user ? colors.dngs : colors.acs }]}>
+                <LogOut size={20} color={user ? colors.dngt : colors.act} />
               </View>
               <View style={s.mid}>
-                <Text style={[s.label, { color: colors.dngt }]}>Sign Out</Text>
+                <Text style={[s.label, { color: user ? colors.dngt : colors.act }]}>
+                  {user ? 'Sign Out' : 'Sign In'}
+                </Text>
+                <Text style={[s.sub, { color: colors.mut }]}>
+                  {user ? user.email : 'Keep your data across devices'}
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
-        </Pressable>
-      </Pressable>
+
+          <TouchableOpacity onPress={close} style={[s.closeBtn, { borderColor: colors.bd }]}>
+            <Text style={[s.closeText, { color: colors.mut }]}>Close</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </View>
     </Modal>
   );
 }
 
 const s = StyleSheet.create({
-  overlay: { flex: 1, justifyContent: 'flex-end', backgroundColor: 'rgba(11,11,16,0.4)' },
-  sheet: { paddingHorizontal: 20, paddingTop: 10, paddingBottom: Platform.OS === 'ios' ? 40 : 30 },
-  handle: { width: 38, height: 5, borderRadius: 99, alignSelf: 'center', marginBottom: 14 },
+  overlay: { flex: 1, justifyContent: 'flex-end' },
+  backdrop: { ...StyleSheet.absoluteFillObject, backgroundColor: 'rgba(11,11,16,0.45)' },
+  sheet: { paddingHorizontal: 20, paddingBottom: Platform.OS === 'ios' ? 40 : 30 },
+  handleArea: { paddingTop: 10, paddingBottom: 12, alignItems: 'center' },
+  handle: { width: 42, height: 5, borderRadius: 99 },
   title: { fontSize: 17, fontWeight: '800', marginBottom: 12 },
   list: { gap: 8 },
   row: { flexDirection: 'row', alignItems: 'center', gap: 14, borderWidth: 1, borderRadius: 15, padding: 15 },
@@ -67,4 +198,6 @@ const s = StyleSheet.create({
   mid: { flex: 1 },
   label: { fontSize: 15, fontWeight: '700' },
   sub: { fontSize: 12, fontWeight: '500', marginTop: 2 },
+  closeBtn: { marginTop: 12, paddingVertical: 12, borderRadius: 12, borderWidth: 1, alignItems: 'center' },
+  closeText: { fontSize: 14, fontWeight: '700' },
 });

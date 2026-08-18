@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!--
+    Android adaptive icon, foreground layer: the printed target, over the buff
+    paper of the background layer.
+
+    Scaled to 0.86 so the black disc sits inside the centre 66% that every
+    launcher mask is guaranteed to leave visible. At full size the disc is 672
+    across against a 683 safe diameter - it technically fits, with five pixels
+    to spare, and reads as a disc jammed into its mask. The margin is what
+    makes it look printed on something.
+  -->
+  <g transform="translate(512,512) scale(0.86) translate(-512,-512)">
+    <circle cx="512" cy="512" r="336" fill="#17161D"/>
+    <g stroke="#EFE9DC" stroke-width="28" fill="none">
+      <circle cx="512" cy="512" r="244"/>
+      <circle cx="512" cy="512" r="152"/>
+    </g>
+    <circle cx="512" cy="512" r="60" fill="#EFE9DC"/>
+    <g fill="#F0872B">
+      <circle cx="352" cy="368" r="56"/>
+      <circle cx="442" cy="336" r="52"/>
+      <circle cx="376" cy="452" r="54"/>
+    </g>
+  </g>
+</svg>

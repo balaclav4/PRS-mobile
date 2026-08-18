@@ -1,0 +1,50 @@
+[debug] [2026-08-06T04:50:24.098Z] ----------------------------------------------------------------------
+[debug] [2026-08-06T04:50:24.099Z] Command:       /usr/bin/node /home/maxwell/.npm/_npx/7750544ccf494d8b/node_modules/.bin/firebase login
+[debug] [2026-08-06T04:50:24.099Z] CLI Version:   15.26.0
+[debug] [2026-08-06T04:50:24.099Z] Platform:      linux
+[debug] [2026-08-06T04:50:24.099Z] Node Version:  v26.4.0
+[debug] [2026-08-06T04:50:24.099Z] Detected Agent: unknown
+[debug] [2026-08-06T04:50:24.099Z] Time:          Wed Aug 05 2026 21:50:24 GMT-0700 (Pacific Daylight Time)
+[debug] [2026-08-06T04:50:24.099Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-08-06T04:50:24.105Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[info] i  The Firebase CLI’s MCP server feature can optionally make use of Gemini in Firebase. Learn more about Gemini in Firebase and how it uses your data: https://firebase.google.com/docs/gemini-in-firebase#how-gemini-in-firebase-uses-your-data 
+[debug] [2026-08-06T04:50:24.458Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2026-08-06T04:50:24.458Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[info] 
+[info] i  Firebase optionally collects CLI and Emulator Suite usage and error reporting information to help improve our products. Data is collected in accordance with Google's privacy policy (https://policies.google.com/privacy) and is not used to identify you. 
+[info] 
+[info] Visit this URL on this device to log in:
+[info] https://accounts.google.com/o/oauth2/auth?client_id=563584335869-fgrhgmd47bqnekij5i8b5pr03ho849e6.apps.googleusercontent.com&scope=email%20openid%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloudplatformprojects.readonly%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Ffirebase%20https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fcloud-platform&response_type=code&state=736151771&redirect_uri=http%3A%2F%2Flocalhost%3A9005
+[info] 
+[info] Waiting for authentication...
+[debug] [2026-08-06T04:55:19.388Z] >>> [apiv2][query] POST https://auth.firebase.tools/attest [none]
+[debug] [2026-08-06T04:55:19.388Z] >>> [apiv2][body] POST https://auth.firebase.tools/attest {"session_id":"f8bb7279-13ce-4ca7-9389-37ce95906118"}
+[debug] [2026-08-06T04:55:19.782Z] <<< [apiv2][status] POST https://auth.firebase.tools/attest 200
+[debug] [2026-08-06T04:55:19.782Z] <<< [apiv2][body] POST https://auth.firebase.tools/attest {"token":"c5COX7nrVoLau_E1dQOp_qofy03eohV9EhqpckBohFk"}
+[info] 
+[info] To sign in to the Firebase CLI:
+[info] 
+[info] 1. Take note of your session ID:
+[info] 
+[info]    F8BB7
+[info] 
+[info] 2. Visit the URL below on any device and follow the instructions to get your code:
+[info] 
+[info]    https://auth.firebase.tools/login?code_challenge=fz-p_onq7aP2G2eyrAi1Rotdjz7UYXZp-Gn9519isu0&session=f8bb7279-13ce-4ca7-9389-37ce95906118&attest=c5COX7nrVoLau_E1dQOp_qofy03eohV9EhqpckBohFk
+[info] 
+[info] 3. Paste or enter the authorization code below once you have it:
+[info] 
+[debug] [2026-08-06T04:55:29.317Z] ExitPromptError: User force closed the prompt with SIGINT
+    at Interface.sigint (/home/maxwell/.npm/_npx/7750544ccf494d8b/node_modules/@inquirer/core/dist/commonjs/lib/create-prompt.js:101:37)
+    at Interface.emit (node:events:509:20)
+    at [_ttyWrite] [as _ttyWrite] (node:internal/readline/interface:1327:18)
+    at ReadStream.onkeypress (node:internal/readline/interface:284:20)
+    at ReadStream.emit (node:events:521:24)
+    at emitKeys (node:internal/readline/utils:371:14)
+    at emitKeys.next (<anonymous>)
+    at ReadStream.onData (node:internal/readline/emitKeypressEvents:64:36)
+    at ReadStream.emit (node:events:509:20)
+    at addChunk (node:internal/streams/readable:568:12)
+[error] 
+[error] Error: An unexpected error has occurred.
